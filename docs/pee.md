@@ -1,15 +1,16 @@
-## moreutils mispipe
+## pee
 
-Pipe two commands, returning the exit status of the first
+Tee standard input to pipes
 
 ```
-moreutils mispipe command command [flags]
+pee command... [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for mispipe
+  -h, --help      help for pee
+  -v, --version   version for pee
 ```
 
 ### SEE ALSO

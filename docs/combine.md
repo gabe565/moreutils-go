@@ -1,15 +1,16 @@
-## moreutils combine
+## combine
 
 Combine sets of lines from two files using boolean operations
 
 ```
-moreutils combine file operator file [flags]
+combine file operator file [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for combine
+  -h, --help      help for combine
+  -v, --version   version for combine
 ```
 
 ### SEE ALSO

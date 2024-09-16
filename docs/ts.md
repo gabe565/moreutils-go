@@ -1,15 +1,16 @@
-## moreutils zrun
+## ts
 
-Automatically decompress arguments to command
+Timestamp standard input
 
 ```
-moreutils zrun command args [flags]
+ts [format] [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for zrun
+  -h, --help      help for ts
+  -v, --version   version for ts
 ```
 
 ### SEE ALSO

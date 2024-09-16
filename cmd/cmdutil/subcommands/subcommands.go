@@ -20,18 +20,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func All() []*cobra.Command {
+func All(opts ...cmdutil.Option) []*cobra.Command {
 	return []*cobra.Command{
-		chronic.New(),
-		combine.New(),
-		ifne.New(),
-		mispipe.New(),
-		pee.New(),
-		sponge.New(),
-		ts.New(),
-		vidir.New(),
-		vipe.New(),
-		zrun.New(),
+		chronic.New(opts...),
+		combine.New(opts...),
+		ifne.New(opts...),
+		mispipe.New(opts...),
+		pee.New(opts...),
+		sponge.New(opts...),
+		ts.New(opts...),
+		vidir.New(opts...),
+		vipe.New(opts...),
+		zrun.New(opts...),
 	}
 }
 

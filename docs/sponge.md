@@ -1,16 +1,17 @@
-## moreutils sponge
+## sponge
 
 Soak up standard input and write to a file
 
 ```
-moreutils sponge file [flags]
+sponge file [flags]
 ```
 
 ### Options
 
 ```
-  -a, --append   Append to the file instead of overwriting
-  -h, --help     help for sponge
+  -a, --append    Append to the file instead of overwriting
+  -h, --help      help for sponge
+  -v, --version   version for sponge
 ```
 
 ### SEE ALSO

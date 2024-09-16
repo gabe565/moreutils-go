@@ -1,9 +1,9 @@
-## moreutils vidir
+## vidir
 
 Edit a directory in your text editor
 
 ```
-moreutils vidir [file | dir]... [flags]
+vidir [file | dir]... [flags]
 ```
 
 ### Options
@@ -12,6 +12,7 @@ moreutils vidir [file | dir]... [flags]
   -h, --help        help for vidir
   -r, --recursive   Recurses into subdirectories
   -v, --verbose     Verbosely display the actions taken by the program.
+      --version     version for vidir
 ```
 
 ### SEE ALSO

@@ -1,9 +1,9 @@
-## moreutils vipe
+## vipe
 
 Insert a text editor into a pipe
 
 ```
-moreutils vipe [flags]
+vipe [flags]
 ```
 
 ### Options
@@ -11,6 +11,7 @@ moreutils vipe [flags]
 ```
   -h, --help            help for vipe
   -s, --suffix string   Provides a file extension to the temp file generated (default "txt")
+  -v, --version         version for vipe
 ```
 
 ### SEE ALSO

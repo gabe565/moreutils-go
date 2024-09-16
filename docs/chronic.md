@@ -1,9 +1,9 @@
-## moreutils chronic
+## chronic
 
 Runs a command quietly unless it fails
 
 ```
-moreutils chronic command [flags]
+chronic command [flags]
 ```
 
 ### Options
@@ -12,6 +12,7 @@ moreutils chronic command [flags]
   -h, --help      help for chronic
   -e, --stderr    Triggers output when stderr output length is non-zero
   -v, --verbose   Verbose output (distinguishes between STDOUT and STDERR, also reports RETVAL)
+      --version   version for chronic
 ```
 
 ### SEE ALSO
