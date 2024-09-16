@@ -1,4 +1,5 @@
 .idea/
+/manpages/
 /moreutils
 data/
 dist/
