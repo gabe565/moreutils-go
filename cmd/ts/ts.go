@@ -54,7 +54,7 @@ func validArgs(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCom
 
 func run(cmd *cobra.Command, args []string) error {
 	if util.IsTerminal(cmd.InOrStdin()) {
-		return cmd.Usage()
+		return util.ErrNotAPipe
 	}
 	cmd.SilenceUsage = true
 

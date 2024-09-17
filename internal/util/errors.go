@@ -5,6 +5,8 @@ import (
 	"slices"
 )
 
+var ErrNotAPipe = errors.New("this command should be run in a pipe")
+
 // JoinErrors behaves similarly to errors.Join, but returns the error verbatim if there is only 1.
 func JoinErrors(errs ...error) error {
 	errs = slices.DeleteFunc(errs, func(err error) bool {

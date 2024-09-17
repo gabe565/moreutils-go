@@ -42,7 +42,7 @@ func validArgs(_ *cobra.Command, args []string, _ string) ([]string, cobra.Shell
 func run(cmd *cobra.Command, args []string) error {
 	if args[0] == "-" || args[2] == "-" {
 		if util.IsTerminal(cmd.InOrStdin()) {
-			return cmd.Usage()
+			return util.ErrNotAPipe
 		}
 	}
 

@@ -37,7 +37,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 
 func run(cmd *cobra.Command, _ []string) error {
 	if util.IsTerminal(cmd.InOrStdin()) {
-		return cmd.Usage()
+		return util.ErrNotAPipe
 	}
 	cmd.SilenceUsage = true
 
