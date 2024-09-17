@@ -20,7 +20,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " [format]",
 		Short:   "Timestamp standard input",
-		Args:    cobra.NoArgs,
+		Args:    cobra.MaximumNArgs(1),
 		RunE:    run,
 		GroupID: cmdutil.Applet,
 
