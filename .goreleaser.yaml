@@ -1,0 +1,175 @@
+version: 2
+project_name: moreutils-go
+before:
+  hooks:
+    - go run ./internal/generate/completions --date={{ .CommitDate }}
+    - go run ./internal/generate/manpages --version={{ .Version }} --date={{ .CommitDate }}
+    - go run ./internal/generate/links --date={{ .CommitTimestamp }}
+builds:
+  - binary: moreutils
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - -s
+      - -w
+      - -X main.version={{.Version}}
+    goarch:
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - "7"
+    mod_timestamp: "{{.CommitTimestamp}}"
+archives:
+  - format: tar.gz
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+      - README.md
+      - manpages/*
+      - completions/*
+      - links/*
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  version_template: "{{ incpatch .Version }}-beta"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs'
+      - '^test'
+  groups:
+    - title: Breaking Changes
+      order: 0
+      regexp: '\)!:'
+    - title: Features
+      order: 0
+      regexp: "(feat)"
+    - title: Fixes
+      order: 1
+      regexp: "(fix|perf)"
+    - title: Others
+      order: 999
+brews:
+  - homepage: https://github.com/gabe565/moreutils
+    description: A collection of the Unix tools that nobody thought to write long ago when Unix was young.
+    license: GPL-3.0
+    repository:
+      owner: gabe565
+      name: homebrew-tap
+    directory: Formula
+    install: |
+      bin.install "moreutils"
+      bin.install Dir["links/*"]
+
+      man1.install Dir["manpages/*"]
+ 
+      bash_completion.install Dir["completions/bash/*"]
+      zsh_completion.install Dir["completions/zsh/*"]
+      fish_completion.install Dir["completions/fish/*"]
+nfpms:
+  - id: packages
+    vendor: Gabe Cook
+    homepage: https://github.com/gabe565/moreutils-go
+    description: A collection of the Unix tools that nobody thought to write long ago when Unix was young.
+    license: GPL-3.0
+    maintainer: Gabe Cook <gabe565@gmail.com>
+    formats:
+      - deb
+      - rpm
+    provides:
+      - moreutils
+    contents:
+      - src: ./links/
+        dst: /usr/bin
+        file_info:
+          mode: 0644
+      - src: ./manpages/
+        dst: /usr/share/man/man1
+        file_info:
+          mode: 0644
+      - src: ./completions/bash/
+        dst: /usr/share/bash-completion/completions
+        file_info:
+          mode: 0644
+      - src: ./completions/zsh/
+        dst:  /usr/share/zsh/vendor-completions
+        file_info:
+          mode: 0644
+      - src: ./completions/fish/
+        dst: /usr/share/fish/vendor_completions.d
+        file_info:
+          mode: 0644
+publishers:
+  - name: fury.io
+    ids:
+      - packages
+    dir: "{{ dir .ArtifactPath }}"
+    cmd: curl -sf -Fpackage=@{{ .ArtifactName }} https://{{ .Env.FURY_TOKEN }}@push.fury.io/gabe565/
+aurs:
+  - name: moreutils-go-bin
+    homepage: https://github.com/gabe565/moreutils
+    description: A collection of the Unix tools that nobody thought to write long ago when Unix was young.
+    maintainers:
+      - Gabe Cook <gabe565@gmail.com>
+    license: GPL-3.0
+    private_key: '{{ .Env.AUR_SSH_KEY }}'
+    git_url: ssh://aur@aur.archlinux.org/moreutils-go-bin.git
+    skip_upload: auto
+    provides:
+      - moreutils
+    package: |-
+      # bin
+      install -Dm755 moreutils "${pkgdir}/usr/bin/moreutils"
+      cp -a links/* "${pkgdir}/usr/bin"
+      # license
+      install -Dm644 "./LICENSE" "${pkgdir}/usr/share/licenses/moreutils/LICENSE"
+      # man pages
+      install -Dm644 -t"${pkgdir}/usr/share/man/man1" manpages/*
+      # completions
+      install -Dm644 -t"${pkgdir}/usr/share/bash-completion/completions" completions/bash/*
+      install -Dm644 -t"${pkgdir}/usr/share/zsh/site-functions" completions/zsh/*
+      install -Dm644 -t"${pkgdir}/usr/share/fish/vendor_completions.d" completions/fish/*
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+dockers:
+  - &dockers
+    image_templates:
+      - ghcr.io/gabe565/{{ .ProjectName }}:{{ .Version }}-amd64
+    use: buildx
+    dockerfile: goreleaser.Dockerfile
+    build_flag_templates:
+      - "--platform=linux/amd64"
+  - <<: *dockers
+    image_templates:
+      - ghcr.io/gabe565/{{ .ProjectName }}:{{ .Version }}-armv7
+    goarch: arm
+    goarm: 7
+    build_flag_templates:
+      - "--platform=linux/arm/v7"
+  - <<: *dockers
+    image_templates:
+      - ghcr.io/gabe565/{{ .ProjectName }}:{{ .Version }}-arm64v8
+    goarch: arm64
+    build_flag_templates:
+      - "--platform=linux/arm64/v8"
+docker_manifests:
+  - &docker_manifests
+    name_template: ghcr.io/gabe565/{{ .ProjectName }}:latest
+    image_templates:
+      - ghcr.io/gabe565/{{ .ProjectName }}:{{ .Version }}-amd64
+      - ghcr.io/gabe565/{{ .ProjectName }}:{{ .Version }}-armv7
+      - ghcr.io/gabe565/{{ .ProjectName }}:{{ .Version }}-arm64v8
+  - <<: *docker_manifests
+    name_template: ghcr.io/gabe565/{{ .ProjectName }}:{{ .Version }}
+  - <<: *docker_manifests
+    name_template: ghcr.io/gabe565/{{ .ProjectName }}:{{ .Major }}
+  - <<: *docker_manifests
+    name_template: ghcr.io/gabe565/{{ .ProjectName }}:{{ .Major }}.{{ .Minor }}
