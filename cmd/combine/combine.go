@@ -56,36 +56,40 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	f1, closeF1, err := openFile(cmd, args[0])
+	f1, err := openFile(cmd, args[0])
 	if err != nil {
 		return err
 	}
-	defer closeF1()
+	defer func() {
+		_ = f1.Close()
+	}()
 
-	f2, closeF2, err := openFile(cmd, args[2])
+	f2, err := openFile(cmd, args[2])
 	if err != nil {
 		return err
 	}
-	defer closeF2()
+	defer func() {
+		_ = f2.Close()
+	}()
 
 	cmd.SilenceUsage = true
 	return op.compare(cmd.OutOrStdout(), f1, f2)
 }
 
 // openFile opens the given file, or buffers stdin if "-"
-func openFile(cmd *cobra.Command, path string) (io.ReadSeeker, func(), error) {
+func openFile(cmd *cobra.Command, path string) (io.ReadSeekCloser, error) {
 	switch path {
 	case "-":
 		var buf bytes.Buffer
 		if _, err := io.Copy(&buf, cmd.InOrStdin()); err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		return seekbuf.New(buf.Bytes()), func() {}, nil
+		return seekbuf.New(buf.Bytes()), nil
 	default:
 		f, err := os.Open(path)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
-		return f, func() { _ = f.Close() }, nil
+		return f, nil
 	}
 }
