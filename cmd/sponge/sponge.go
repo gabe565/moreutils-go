@@ -55,6 +55,7 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 		defer func() {
 			_ = tmp.Close()
+			_ = os.Remove(tmp.Name())
 		}()
 
 		if stat != nil {
