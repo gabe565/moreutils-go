@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -12,6 +13,11 @@ import (
 	"github.com/gabe565/moreutils/cmd/cmdutil/subcommands"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
+)
+
+var (
+	ErrMissingBeginApplets = errors.New("readme missing begin applets comment")
+	ErrMissingEndApplets   = errors.New("readme missing end applets comment")
 )
 
 func main() {
@@ -67,6 +73,34 @@ func main() {
 		if err := out.Close(); err != nil {
 			panic(err)
 		}
+	}
+
+	readmeContents, err := os.ReadFile("README.md")
+	if err != nil {
+		panic(err)
+	}
+
+	const beforeMarker, afterMarker = "## Applets\n\n", "\n## Installation\n"
+
+	beforeApplets, _, found := bytes.Cut(readmeContents, []byte(beforeMarker))
+	if !found {
+		panic(ErrMissingBeginApplets)
+	}
+	_, afterApplets, found := bytes.Cut(readmeContents[len(beforeApplets):], []byte(afterMarker))
+	if !found {
+		panic(ErrMissingEndApplets)
+	}
+
+	var list []byte
+	for _, subCmd := range subcommands.All() {
+		list = append(list, []byte("- **["+subCmd.Name()+"](docs/"+subCmd.Name()+".md)**: "+subCmd.Short+"\n")...)
+	}
+
+	readmeContents = slices.Concat(beforeApplets, []byte(beforeMarker), list, []byte(afterMarker), afterApplets)
+
+	//nolint:gosec
+	if err := os.WriteFile("README.md", readmeContents, 0o644); err != nil {
+		panic(err)
 	}
 }
 
