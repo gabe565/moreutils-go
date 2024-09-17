@@ -20,7 +20,7 @@ func New() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "install dir",
 		Short: "Creates hardlinks/symlinks for each applet",
-		Args:  cobra.MinimumNArgs(1),
+		Args:  cobra.ExactArgs(1),
 		RunE:  run,
 
 		ValidArgsFunction: validArgs,
