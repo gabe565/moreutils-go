@@ -1,5 +1,6 @@
 # moreutils
 [![Build](https://github.com/gabe565/moreutils/actions/workflows/build.yaml/badge.svg)](https://github.com/gabe565/moreutils/actions/workflows/build.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/gabe565/moreutils)](https://goreportcard.com/report/github.com/gabe565/moreutils)
 
 Go rewrite of [moreutils](http://kitenet.net/~joey/code/moreutils/).
 
