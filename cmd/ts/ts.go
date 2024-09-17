@@ -24,7 +24,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		RunE:    run,
 		GroupID: cmdutil.Applet,
 
-		ValidArgsFunction: cobra.NoFileCompletions,
+		ValidArgsFunction: validArgs,
 	}
 
 	cmd.Flags().BoolP(FlagMonotonic, "m", false, "Use the system's monotonic clock")
@@ -36,6 +36,20 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		opt(cmd)
 	}
 	return cmd
+}
+
+func validArgs(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+	completions := []string{
+		"%b %e %H:%M:%S",
+		"%a %b %e %H:%M:%S %Y",
+		"%Y-%m-%d %H:%M:%S",
+		"%Y-%m-%dT%H:%M:%S%z",
+	}
+	now := time.Now()
+	for i, completion := range completions {
+		completions[i] += "\t" + strftime.Format(completion, now)
+	}
+	return completions, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveKeepOrder
 }
 
 func run(cmd *cobra.Command, args []string) error {
