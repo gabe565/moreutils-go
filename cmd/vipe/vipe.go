@@ -23,6 +23,8 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		Args:    cobra.NoArgs,
 		RunE:    run,
 		GroupID: cmdutil.Applet,
+
+		ValidArgsFunction: cobra.NoFileCompletions,
 	}
 
 	cmd.Flags().StringP(FlagSuffix, "s", "txt", "Provides a file extension to the temp file generated")

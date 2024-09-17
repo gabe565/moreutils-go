@@ -22,6 +22,8 @@ func New() *cobra.Command {
 		Short: "Creates hardlinks/symlinks for each applet",
 		Args:  cobra.MinimumNArgs(1),
 		RunE:  run,
+
+		ValidArgsFunction: validArgs,
 	}
 
 	cmd.Flags().BoolP(FlagSymbolic, "s", false, "Create symbolic links instead of hard links")
@@ -29,6 +31,13 @@ func New() *cobra.Command {
 	cmd.Flags().BoolP(FlagRelative, "r", false, "Create relative symbolic links")
 
 	return cmd
+}
+
+func validArgs(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+	if len(args) == 0 {
+		return nil, cobra.ShellCompDirectiveFilterDirs
+	}
+	return nil, cobra.ShellCompDirectiveNoFileComp
 }
 
 func run(cmd *cobra.Command, args []string) error {

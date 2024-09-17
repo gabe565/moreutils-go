@@ -23,11 +23,20 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		Args:    cobra.RangeArgs(3, 4),
 		RunE:    run,
 		GroupID: cmdutil.Applet,
+
+		ValidArgsFunction: validArgs,
 	}
 	for _, opt := range opts {
 		opt(cmd)
 	}
 	return cmd
+}
+
+func validArgs(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+	if len(args) == 1 {
+		return operatorStrings(), cobra.ShellCompDirectiveNoFileComp
+	}
+	return nil, cobra.ShellCompDirectiveDefault
 }
 
 func run(cmd *cobra.Command, args []string) error {

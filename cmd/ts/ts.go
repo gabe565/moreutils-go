@@ -23,6 +23,8 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		Args:    cobra.NoArgs,
 		RunE:    run,
 		GroupID: cmdutil.Applet,
+
+		ValidArgsFunction: cobra.NoFileCompletions,
 	}
 
 	cmd.Flags().BoolP(FlagMonotonic, "m", false, "Use the system's monotonic clock")
