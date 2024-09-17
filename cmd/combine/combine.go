@@ -2,6 +2,7 @@ package combine
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"os"
 
@@ -39,11 +40,15 @@ func validArgs(_ *cobra.Command, args []string, _ string) ([]string, cobra.Shell
 	return nil, cobra.ShellCompDirectiveDefault
 }
 
+var ErrBothFilesStdin = errors.New("both files are stdin")
+
 func run(cmd *cobra.Command, args []string) error {
-	if args[0] == "-" || args[2] == "-" {
-		if util.IsTerminal(cmd.InOrStdin()) {
-			return util.ErrNotAPipe
-		}
+	if (args[0] == "-" || args[2] == "-") && util.IsTerminal(cmd.InOrStdin()) {
+		return util.ErrNotAPipe
+	}
+
+	if args[0] == "-" && args[2] == "-" {
+		return ErrBothFilesStdin
 	}
 
 	var op operator
