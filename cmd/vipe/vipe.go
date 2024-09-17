@@ -47,7 +47,7 @@ func run(cmd *cobra.Command, _ []string) error {
 		suffix = "." + suffix
 	}
 
-	tmp, err := os.CreateTemp("", "vipe-*-"+suffix)
+	tmp, err := os.CreateTemp("", "vipe-*"+suffix)
 	if err != nil {
 		return err
 	}
