@@ -68,9 +68,8 @@ func shouldRun(r *bufio.Reader, invert bool) (bool, error) {
 	} else {
 		if errors.Is(err, io.EOF) {
 			return invert, nil
-		} else {
-			return false, err
 		}
+		return false, err
 	}
 	return !invert, nil
 }

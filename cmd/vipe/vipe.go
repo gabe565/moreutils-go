@@ -33,7 +33,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	return cmd
 }
 
-func run(cmd *cobra.Command, args []string) error {
+func run(cmd *cobra.Command, _ []string) error {
 	if util.IsTerminal(cmd.InOrStdin()) {
 		return cmd.Usage()
 	}

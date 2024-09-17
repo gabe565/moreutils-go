@@ -14,9 +14,11 @@ type errorWriter struct {
 	w io.Writer
 }
 
+var errFailed = errors.New("failed")
+
 func (e errorWriter) Write(p []byte) (int, error) {
 	n, _ := e.w.Write(p)
-	return n, errors.New("failed")
+	return n, errFailed
 }
 
 func TestSuppressErrorWriter_Write(t *testing.T) {
@@ -27,12 +29,12 @@ func TestSuppressErrorWriter_Write(t *testing.T) {
 	// Initial bytes are written
 	n, err := w.Write([]byte("test"))
 	assert.Equal(t, 4, n)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "test", buf.String())
 
 	// Further bytes are ignored
 	n, err = w.Write([]byte("test"))
 	assert.Equal(t, 4, n)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	assert.Equal(t, "test", buf.String())
 }

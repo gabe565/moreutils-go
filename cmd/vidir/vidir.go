@@ -130,7 +130,7 @@ func run(cmd *cobra.Command, args []string) error {
 			}
 		}
 		if tmpName != newName {
-			if err := rename(newName, tmpName, verbose); err != nil {
+			if err := rename(cmd.OutOrStdout(), newName, tmpName, verbose); err != nil {
 				return err
 			}
 			for k, v := range paths {
@@ -140,7 +140,7 @@ func run(cmd *cobra.Command, args []string) error {
 			}
 		}
 
-		if err := rename(oldName, newName, verbose); err != nil {
+		if err := rename(cmd.OutOrStdout(), oldName, newName, verbose); err != nil {
 			return err
 		}
 	}
@@ -203,9 +203,9 @@ func createListing(w io.Writer, args []string, recursive bool) ([]string, error)
 	return paths, buf.Flush()
 }
 
-func rename(old, new string, verbose bool) error {
+func rename(w io.Writer, oldname, newname string, verbose bool) error {
 	if verbose {
-		fmt.Printf("%q => %q\n", old, new)
+		_, _ = fmt.Fprintf(w, "%q => %q\n", oldname, newname)
 	}
-	return os.Rename(old, new)
+	return os.Rename(oldname, newname)
 }

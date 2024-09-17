@@ -17,9 +17,8 @@ func main() {
 		var execErr *exec.ExitError
 		if errors.As(err, &execErr) {
 			os.Exit(execErr.ExitCode())
-		} else {
-			root.PrintErrln(root.ErrPrefix(), err.Error())
 		}
+		root.PrintErrln(root.ErrPrefix(), err.Error())
 		os.Exit(1)
 	}
 }

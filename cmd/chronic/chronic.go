@@ -76,11 +76,11 @@ func printBuf(cmd *cobra.Command, buf *execbuf.Buffer, exitCode int, verbose boo
 	}
 
 	var errs []error
-	fmt.Println("STDOUT:")
+	_, _ = fmt.Fprintln(cmd.OutOrStdout(), "STDOUT:")
 	errs = append(errs, buf.Print(cmd.OutOrStdout()))
-	fmt.Println("\nSTDERR:")
+	_, _ = fmt.Fprintln(cmd.OutOrStdout(), "\nSTDERR:")
 	errs = append(errs, buf.Print(cmd.ErrOrStderr()))
 
-	fmt.Println("\nRETVAL:", strconv.Itoa(exitCode))
+	_, _ = fmt.Fprintln(cmd.OutOrStdout(), "\nRETVAL:", strconv.Itoa(exitCode))
 	return util.JoinErrors(errs...)
 }

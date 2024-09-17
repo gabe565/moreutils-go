@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//nolint:err113
 func TestJoinErrors(t *testing.T) {
 	type args struct {
 		errs []error

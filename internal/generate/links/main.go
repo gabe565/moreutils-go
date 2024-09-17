@@ -27,7 +27,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := os.MkdirAll("links", 0755); err != nil {
+	if err := os.MkdirAll("links", 0o755); err != nil {
 		panic(err)
 	}
 

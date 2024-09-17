@@ -52,7 +52,7 @@ func run(cmd *cobra.Command, args []string) error {
 
 	scanner := bufio.NewScanner(cmd.InOrStdin())
 	for scanner.Scan() {
-		fmt.Println(timestamp(format), scanner.Text())
+		_, _ = fmt.Fprintln(cmd.OutOrStdout(), timestamp(format), scanner.Text())
 	}
 	return scanner.Err()
 }
