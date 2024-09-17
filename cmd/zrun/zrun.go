@@ -53,7 +53,7 @@ func run(cmd *cobra.Command, args []string) error {
 			continue
 		}
 
-		if isTmp(arg) {
+		if isCompressed(arg) {
 			arg, err := decompressTmp(arg)
 			defer func() {
 				if arg != "" {
@@ -75,7 +75,7 @@ func run(cmd *cobra.Command, args []string) error {
 	return e.Run()
 }
 
-func isTmp(arg string) bool {
+func isCompressed(arg string) bool {
 	ext := filepath.Ext(arg)
 	return strings.EqualFold(ext, ".gz") || ext == ".Z" ||
 		strings.EqualFold(ext, ".bz2")
