@@ -72,6 +72,10 @@ func run(cmd *cobra.Command, _ []string) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		_ = tmp.Close()
+		_ = os.Remove(tmp.Name())
+	}()
 
 	if _, err := io.Copy(cmd.OutOrStdout(), tmp); err != nil {
 		return err
