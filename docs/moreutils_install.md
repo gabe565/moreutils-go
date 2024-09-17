@@ -11,6 +11,7 @@ moreutils install dir [flags]
 ```
   -f, --force      Overwrite existing files
   -h, --help       help for install
+  -r, --relative   Create relative symbolic links
   -s, --symbolic   Create symbolic links instead of hard links
 ```
 

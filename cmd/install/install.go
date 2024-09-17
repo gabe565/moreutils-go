@@ -3,6 +3,7 @@ package install
 import (
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/gabe565/moreutils/cmd/cmdutil/subcommands"
 	"github.com/gabe565/moreutils/internal/util"
@@ -12,6 +13,7 @@ import (
 const (
 	FlagSymbolic = "symbolic"
 	FlagForce    = "force"
+	FlagRelative = "relative"
 )
 
 func New() *cobra.Command {
@@ -24,6 +26,7 @@ func New() *cobra.Command {
 
 	cmd.Flags().BoolP(FlagSymbolic, "s", false, "Create symbolic links instead of hard links")
 	cmd.Flags().BoolP(FlagForce, "f", false, "Overwrite existing files")
+	cmd.Flags().BoolP(FlagRelative, "r", false, "Create relative symbolic links")
 
 	return cmd
 }
@@ -49,6 +52,25 @@ func run(cmd *cobra.Command, args []string) error {
 	symbolic, err := cmd.Flags().GetBool(FlagSymbolic)
 	if err != nil {
 		panic(err)
+	}
+
+	relative, err := cmd.Flags().GetBool(FlagRelative)
+	if err != nil {
+		panic(err)
+	}
+
+	if relative {
+		dstAbs, err := filepath.Abs(dst)
+		if err != nil {
+			return err
+		}
+
+		relPath, err := filepath.Rel(dstAbs, filepath.Dir(src))
+		if err != nil {
+			return err
+		}
+
+		src = filepath.Join(relPath, filepath.Base(src))
 	}
 
 	var errs []error
