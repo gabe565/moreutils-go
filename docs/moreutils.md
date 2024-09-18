@@ -13,6 +13,7 @@ A collection of the Unix tools that nobody thought to write long ago when Unix w
 
 * [chronic](chronic.md)	 - Runs a command quietly unless it fails
 * [combine](combine.md)	 - Combine sets of lines from two files using boolean operations
+* [errno](errno.md)	 - Look up errno names and descriptions
 * [ifne](ifne.md)	 - Run a command if the standard input is not empty
 * [moreutils install](moreutils_install.md)	 - Creates hardlinks/symlinks for each applet
 * [mispipe](mispipe.md)	 - Pipe two commands, returning the exit status of the first

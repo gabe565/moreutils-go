@@ -11,6 +11,7 @@ import (
 	"github.com/gabe565/moreutils/cmd/chronic"
 	"github.com/gabe565/moreutils/cmd/cmdutil"
 	"github.com/gabe565/moreutils/cmd/combine"
+	"github.com/gabe565/moreutils/cmd/errno"
 	"github.com/gabe565/moreutils/cmd/ifne"
 	"github.com/gabe565/moreutils/cmd/mispipe"
 	"github.com/gabe565/moreutils/cmd/parallel"
@@ -27,6 +28,7 @@ func All(opts ...cmdutil.Option) []*cobra.Command {
 	return []*cobra.Command{
 		chronic.New(opts...),
 		combine.New(opts...),
+		errno.New(opts...),
 		ifne.New(opts...),
 		mispipe.New(opts...),
 		parallel.New(opts...),
@@ -67,6 +69,8 @@ func Choose(name string, opts ...cmdutil.Option) (*cobra.Command, error) {
 		return chronic.New(opts...), nil
 	case combine.Name, combine.Alias:
 		return combine.New(opts...), nil
+	case errno.Name:
+		return errno.New(opts...), nil
 	case ifne.Name:
 		return ifne.New(opts...), nil
 	case mispipe.Name:

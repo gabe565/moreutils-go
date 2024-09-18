@@ -9,6 +9,7 @@ Go rewrite of [moreutils](http://kitenet.net/~joey/code/moreutils/).
 
 - **[chronic](docs/chronic.md)**: Runs a command quietly unless it fails
 - **[combine](docs/combine.md)**: Combine sets of lines from two files using boolean operations
+- **[errno](docs/errno.md)**: Look up errno names and descriptions
 - **[ifne](docs/ifne.md)**: Run a command if the standard input is not empty
 - **[mispipe](docs/mispipe.md)**: Pipe two commands, returning the exit status of the first
 - **[parallel](docs/moreutils_parallel.md)**: Run multiple jobs at once
