@@ -11,6 +11,7 @@ import (
 	"github.com/gabe565/moreutils/cmd/combine"
 	"github.com/gabe565/moreutils/cmd/ifne"
 	"github.com/gabe565/moreutils/cmd/mispipe"
+	"github.com/gabe565/moreutils/cmd/parallel"
 	"github.com/gabe565/moreutils/cmd/pee"
 	"github.com/gabe565/moreutils/cmd/sponge"
 	"github.com/gabe565/moreutils/cmd/ts"
@@ -26,6 +27,7 @@ func All(opts ...cmdutil.Option) []*cobra.Command {
 		combine.New(opts...),
 		ifne.New(opts...),
 		mispipe.New(opts...),
+		parallel.New(opts...),
 		pee.New(opts...),
 		sponge.New(opts...),
 		ts.New(opts...),
@@ -48,6 +50,8 @@ func Choose(name string, opts ...cmdutil.Option) (*cobra.Command, error) {
 		return ifne.New(opts...), nil
 	case mispipe.Name:
 		return mispipe.New(opts...), nil
+	case parallel.Name:
+		return parallel.New(opts...), nil
 	case pee.Name:
 		return pee.New(opts...), nil
 	case sponge.Name:
