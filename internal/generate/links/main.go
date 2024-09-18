@@ -31,7 +31,7 @@ func main() {
 		panic(err)
 	}
 
-	for _, subCmd := range subcommands.All() {
+	for subCmd := range subcommands.Without(nil) {
 		path := filepath.Join("links", subCmd.Name())
 		if err := os.Symlink(cmd.Name, path); err != nil {
 			panic(err)

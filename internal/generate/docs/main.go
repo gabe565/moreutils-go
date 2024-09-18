@@ -11,7 +11,7 @@ import (
 	"github.com/gabe565/moreutils/cmd"
 	"github.com/gabe565/moreutils/cmd/cmdutil"
 	"github.com/gabe565/moreutils/cmd/cmdutil/subcommands"
-	"github.com/spf13/cobra"
+	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra/doc"
 )
 
@@ -33,10 +33,10 @@ func main() {
 
 	opts := []cmdutil.Option{cmd.WithVersion("beta")}
 	root := cmd.New(cmd.Name, opts...)
-	cmds := append(subcommands.All(opts...), root)
+	cmds := append(slices.Collect(subcommands.Without(nil, opts...)), root)
 	for _, subCmd := range root.Commands() {
 		// Add any commands which aren't standalone
-		if !slices.ContainsFunc(cmds, func(cmd *cobra.Command) bool { return cmd.Name() == subCmd.Name() }) {
+		if !util.CmdsContains(cmds, subCmd) {
 			cmds = append(cmds, subCmd)
 		}
 	}
@@ -92,8 +92,13 @@ func main() {
 	}
 
 	var list []byte
+	linked := slices.Collect(subcommands.Without(nil))
 	for _, subCmd := range subcommands.All() {
-		list = append(list, []byte("- **["+subCmd.Name()+"](docs/"+subCmd.Name()+".md)**: "+subCmd.Short+"\n")...)
+		docPath := subCmd.Name() + ".md"
+		if !util.CmdsContains(linked, subCmd) {
+			docPath = cmd.Name + "_" + docPath
+		}
+		list = append(list, []byte("- **["+subCmd.Name()+"](docs/"+docPath+")**: "+subCmd.Short+"\n")...)
 	}
 
 	readmeContents = slices.Concat(beforeApplets, []byte(beforeMarker), list, []byte(afterMarker), afterApplets)

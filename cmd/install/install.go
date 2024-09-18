@@ -14,6 +14,7 @@ const (
 	FlagSymbolic = "symbolic"
 	FlagForce    = "force"
 	FlagRelative = "relative"
+	FlagExclude  = "exclude"
 )
 
 func New() *cobra.Command {
@@ -29,6 +30,7 @@ func New() *cobra.Command {
 	cmd.Flags().BoolP(FlagSymbolic, "s", false, "Create symbolic links instead of hard links")
 	cmd.Flags().BoolP(FlagForce, "f", false, "Overwrite existing files")
 	cmd.Flags().BoolP(FlagRelative, "r", false, "Create relative symbolic links")
+	cmd.Flags().StringSlice(FlagExclude, subcommands.DefaultExcludes(), "Subcommands that will not be linked")
 
 	return cmd
 }
@@ -82,9 +84,14 @@ func run(cmd *cobra.Command, args []string) error {
 		src = filepath.Join(relPath, filepath.Base(src))
 	}
 
+	excludes, err := cmd.Flags().GetStringSlice(FlagExclude)
+	if err != nil {
+		panic(err)
+	}
+
 	var errs []error
-	for _, cmd := range subcommands.All() {
-		dst := path.Join(dst, cmd.Name())
+	for subCmd := range subcommands.Without(excludes) {
+		dst := path.Join(dst, subCmd.Name())
 		if err := link(symbolic, src, dst); err != nil {
 			if force {
 				if err := os.Remove(dst); err == nil {

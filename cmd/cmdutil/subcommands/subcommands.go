@@ -3,7 +3,9 @@ package subcommands
 import (
 	"errors"
 	"fmt"
+	"iter"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/gabe565/moreutils/cmd/chronic"
@@ -34,6 +36,25 @@ func All(opts ...cmdutil.Option) []*cobra.Command {
 		vidir.New(opts...),
 		vipe.New(opts...),
 		zrun.New(opts...),
+	}
+}
+
+func DefaultExcludes() []string {
+	return []string{parallel.Name}
+}
+
+func Without(excludes []string, opts ...cmdutil.Option) iter.Seq[*cobra.Command] {
+	if len(excludes) == 0 {
+		excludes = DefaultExcludes()
+	}
+	return func(yield func(*cobra.Command) bool) {
+		for _, cmd := range All(opts...) {
+			if !slices.Contains(excludes, cmd.Name()) {
+				if !yield(cmd) {
+					return
+				}
+			}
+		}
 	}
 }
 

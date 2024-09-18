@@ -11,7 +11,7 @@ Go rewrite of [moreutils](http://kitenet.net/~joey/code/moreutils/).
 - **[combine](docs/combine.md)**: Combine sets of lines from two files using boolean operations
 - **[ifne](docs/ifne.md)**: Run a command if the standard input is not empty
 - **[mispipe](docs/mispipe.md)**: Pipe two commands, returning the exit status of the first
-- **[parallel](docs/parallel.md)**: Run multiple jobs at once
+- **[parallel](docs/moreutils_parallel.md)**: Run multiple jobs at once
 - **[pee](docs/pee.md)**: Tee standard input to pipes
 - **[sponge](docs/sponge.md)**: Soak up standard input and write to a file
 - **[ts](docs/ts.md)**: Timestamp standard input

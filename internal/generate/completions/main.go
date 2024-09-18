@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"slices"
 	"time"
 
 	"github.com/gabe565/moreutils/cmd"
@@ -39,12 +40,13 @@ func main() {
 		panic(err)
 	}
 
+	cmds := append(slices.Collect(subcommands.Without(nil)), cmd.New(cmd.Name))
 	for _, shell := range []string{shellBash, shellZsh, shellFish} {
 		basePath := filepath.Join("completions", shell)
 		if err := os.MkdirAll(basePath, 0o777); err != nil {
 			panic(err)
 		}
-		for _, subCmd := range append(subcommands.All(), cmd.New(cmd.Name)) {
+		for _, subCmd := range cmds {
 			var path string
 			switch shell {
 			case shellBash:

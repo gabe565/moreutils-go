@@ -13,7 +13,7 @@ import (
 
 	"github.com/gabe565/moreutils/cmd"
 	"github.com/gabe565/moreutils/cmd/cmdutil/subcommands"
-	"github.com/spf13/cobra"
+	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra/doc"
 	flag "github.com/spf13/pflag"
 )
@@ -45,14 +45,15 @@ func main() {
 	}
 
 	root := cmd.New(cmd.Name)
-	cmds := append(subcommands.All(), root)
+	cmds := append(slices.Collect(subcommands.Without(nil)), root)
 	for _, subCmd := range root.Commands() {
 		// Add any commands which aren't standalone
-		if !slices.ContainsFunc(cmds, func(cmd *cobra.Command) bool { return cmd.Name() == subCmd.Name() }) {
+		if !util.CmdsContains(cmds, subCmd) {
 			cmds = append(cmds, subCmd)
 		}
 	}
 
+	linked := slices.Collect(subcommands.Without(nil))
 	for _, subCmd := range cmds {
 		subCmd.DisableAutoGenTag = true
 		header := doc.GenManHeader{
@@ -64,8 +65,8 @@ func main() {
 		}
 
 		name := subCmd.Name() + ".1.gz"
-		if subCmd.HasParent() {
-			name = subCmd.Parent().Name() + "-" + name
+		if subCmd.Name() != cmd.Name && !util.CmdsContains(linked, subCmd) {
+			name = cmd.Name + "-" + name
 		}
 		path := filepath.Join("manpages", name)
 		out, err := os.Create(path)
@@ -107,7 +108,7 @@ func (s *seeAlsoWriter) Write(p []byte) (int, error) {
 		n := len(p)
 		headerIdx := bytes.Index(p, []byte(seeAlsoLine))
 		p, temp := p[:headerIdx], p[headerIdx:]
-		for _, subCmd := range subcommands.All() {
+		for subCmd := range subcommands.Without(nil) {
 			temp = bytes.ReplaceAll(temp, []byte(cmd.Name+"-"+subCmd.Name()), []byte(subCmd.Name()))
 		}
 		_, err := s.w.Write(append(p, temp...))
