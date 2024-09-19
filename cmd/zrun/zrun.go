@@ -27,6 +27,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		RunE:    run,
 		GroupID: cmdutil.Applet,
 	}
+	cmd.Flags().SetInterspersed(false)
 	for _, opt := range opts {
 		opt(cmd)
 	}

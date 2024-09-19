@@ -29,10 +29,10 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		GroupID: cmdutil.Applet,
 	}
 
+	cmd.Flags().SetInterspersed(false)
 	cmd.Flags().StringP(FlagJobs, "j", strconv.Itoa(runtime.NumCPU()), "Number of jobs to run in parallel. Can be a number or a percentage of CPU cores.")
 	cmd.Flags().BoolP(FlagReplace, "i", false, `Normally the argument is added to the end of the command. With this option, instances of "{}" in the command are replaced with the argument.`)
 	cmd.Flags().IntP(FlagNumArgs, "n", 1, "Number of arguments to pass to a command at a time. Default is 1. Incompatible with -i")
-	cmd.Flags().SetInterspersed(false)
 	cmd.MarkFlagsMutuallyExclusive(FlagReplace, FlagNumArgs)
 
 	for _, opt := range opts {

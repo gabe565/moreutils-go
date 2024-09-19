@@ -25,6 +25,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		GroupID: cmdutil.Applet,
 	}
 
+	cmd.Flags().SetInterspersed(false)
 	cmd.Flags().BoolP(FlagInvert, "n", false, "Inverse operation. Run the command if the standard input is empty.")
 
 	for _, opt := range opts {

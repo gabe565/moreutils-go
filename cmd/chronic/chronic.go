@@ -27,6 +27,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		GroupID: cmdutil.Applet,
 	}
 
+	cmd.Flags().SetInterspersed(false)
 	cmd.Flags().BoolP(FlagStderr, "e", false, "Triggers output when stderr output length is non-zero")
 	cmd.Flags().BoolP(FlagVerbose, "v", false, "Verbose output (distinguishes between STDOUT and STDERR, also reports RETVAL)")
 
