@@ -1,3 +1,5 @@
+//go:build aix || darwin || dragonfly || freebsd || linux || netbsd || openbsd || solaris || zos
+
 package errno
 
 import (
@@ -15,6 +17,7 @@ import (
 
 const (
 	Name       = "errno"
+	Supported  = true
 	FlagList   = "list"
 	FlagSearch = "search"
 )

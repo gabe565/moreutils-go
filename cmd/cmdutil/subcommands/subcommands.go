@@ -25,10 +25,15 @@ import (
 )
 
 func All(opts ...cmdutil.Option) []*cobra.Command {
-	return []*cobra.Command{
+	cmds := make([]*cobra.Command, 0, 12)
+	cmds = append(cmds,
 		chronic.New(opts...),
 		combine.New(opts...),
-		errno.New(opts...),
+	)
+	if errno.Supported {
+		cmds = append(cmds, errno.New(opts...))
+	}
+	cmds = append(cmds,
 		ifne.New(opts...),
 		mispipe.New(opts...),
 		parallel.New(opts...),
@@ -38,7 +43,8 @@ func All(opts ...cmdutil.Option) []*cobra.Command {
 		vidir.New(opts...),
 		vipe.New(opts...),
 		zrun.New(opts...),
-	}
+	)
+	return cmds
 }
 
 func DefaultExcludes() []string {
@@ -70,7 +76,9 @@ func Choose(name string, opts ...cmdutil.Option) (*cobra.Command, error) {
 	case combine.Name, combine.Alias:
 		return combine.New(opts...), nil
 	case errno.Name:
-		return errno.New(opts...), nil
+		if errno.Supported {
+			return errno.New(opts...), nil
+		}
 	case ifne.Name:
 		return ifne.New(opts...), nil
 	case mispipe.Name:
@@ -89,11 +97,11 @@ func Choose(name string, opts ...cmdutil.Option) (*cobra.Command, error) {
 		return vipe.New(opts...), nil
 	case zrun.Name:
 		return zrun.New(opts...), nil
-	default:
-		if strings.HasPrefix(base, zrun.Prefix) {
-			return zrun.New(opts...), nil
-		}
-
-		return nil, fmt.Errorf("%w: %s", ErrUnknownCommand, base)
 	}
+
+	if strings.HasPrefix(base, zrun.Prefix) {
+		return zrun.New(opts...), nil
+	}
+
+	return nil, fmt.Errorf("%w: %s", ErrUnknownCommand, base)
 }
