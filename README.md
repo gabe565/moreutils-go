@@ -138,7 +138,7 @@ echo hello world | docker run --rm -i ghcr.io/gabe565/moreutils ts
 If you are building a container and need one of the applets, you can copy them directly to your container during build:
 ```dockerfile
 FROM alpine
-COPY --from=ghcr.io/gabe565/moreutils:0 /ts /usr/bin
+COPY --from=ghcr.io/gabe565/moreutils:0 /usr/bin/ts /usr/bin
 CMD echo hello world | ts
 ```
 

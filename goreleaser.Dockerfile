@@ -3,7 +3,8 @@ WORKDIR /app
 COPY moreutils .
 RUN ./moreutils install .
 
-FROM scratch
+FROM alpine
+WORKDIR /data
 LABEL org.opencontainers.image.source="https://github.com/gabe565/moreutils"
-COPY --from=source /app /
-ENTRYPOINT ["/moreutils"]
+COPY --from=source /app /usr/bin
+ENTRYPOINT ["moreutils"]
