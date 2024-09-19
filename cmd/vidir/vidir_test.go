@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gabe565/moreutils/cmd/cmdutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -45,7 +46,7 @@ func TestRun(t *testing.T) {
 0003	newname
 EOT'`)
 
-	cmd := New()
+	cmd := New(cmdutil.DisableTTY())
 	var buf strings.Builder
 	cmd.SetOut(&buf)
 	cmd.SetArgs([]string{"--verbose"})

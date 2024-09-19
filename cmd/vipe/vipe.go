@@ -66,7 +66,8 @@ func run(cmd *cobra.Command, _ []string) error {
 		return err
 	}
 
-	if err := editor.Edit(tmp.Name(), true); err != nil {
+	_, disableTTY := cmd.Annotations[cmdutil.DisableTTYAnnotation]
+	if err := editor.Edit(tmp.Name(), !disableTTY); err != nil {
 		return err
 	}
 

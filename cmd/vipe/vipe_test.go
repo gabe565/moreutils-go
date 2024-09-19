@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gabe565/moreutils/cmd/cmdutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -32,7 +33,7 @@ func TestVipe(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Setenv("EDITOR", tt.editor)
-			cmd := New()
+			cmd := New(cmdutil.DisableTTY())
 			cmd.SetArgs(tt.args)
 			cmd.SetIn(strings.NewReader(tt.stdin))
 			var stdout strings.Builder
