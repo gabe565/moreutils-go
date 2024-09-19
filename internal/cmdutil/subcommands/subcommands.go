@@ -12,6 +12,7 @@ import (
 	"github.com/gabe565/moreutils/cmd/combine"
 	"github.com/gabe565/moreutils/cmd/errno"
 	"github.com/gabe565/moreutils/cmd/ifne"
+	"github.com/gabe565/moreutils/cmd/isutf8"
 	"github.com/gabe565/moreutils/cmd/mispipe"
 	"github.com/gabe565/moreutils/cmd/parallel"
 	"github.com/gabe565/moreutils/cmd/pee"
@@ -35,6 +36,7 @@ func All(opts ...cmdutil.Option) []*cobra.Command {
 	}
 	cmds = append(cmds,
 		ifne.New(opts...),
+		isutf8.New(opts...),
 		mispipe.New(opts...),
 		parallel.New(opts...),
 		pee.New(opts...),
@@ -81,6 +83,8 @@ func Choose(name string, opts ...cmdutil.Option) (*cobra.Command, error) {
 		}
 	case ifne.Name:
 		return ifne.New(opts...), nil
+	case isutf8.Name:
+		return isutf8.New(opts...), nil
 	case mispipe.Name:
 		return mispipe.New(opts...), nil
 	case parallel.Name:

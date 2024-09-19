@@ -11,6 +11,7 @@ Go rewrite of [moreutils](http://kitenet.net/~joey/code/moreutils/).
 - **[combine](docs/combine.md)**: Combine sets of lines from two files using boolean operations
 - **[errno](docs/errno.md)**: Look up errno names and descriptions
 - **[ifne](docs/ifne.md)**: Run a command if the standard input is not empty
+- **[isutf8](docs/isutf8.md)**: Check whether files are valid UTF-8
 - **[mispipe](docs/mispipe.md)**: Pipe two commands, returning the exit status of the first
 - **[parallel](docs/moreutils_parallel.md)**: Run multiple jobs at once
 - **[pee](docs/pee.md)**: Tee standard input to pipes

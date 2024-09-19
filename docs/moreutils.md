@@ -16,6 +16,7 @@ A collection of the Unix tools that nobody thought to write long ago when Unix w
 * [errno](errno.md)	 - Look up errno names and descriptions
 * [ifne](ifne.md)	 - Run a command if the standard input is not empty
 * [moreutils install](moreutils_install.md)	 - Creates hardlinks/symlinks for each applet
+* [isutf8](isutf8.md)	 - Check whether files are valid UTF-8
 * [mispipe](mispipe.md)	 - Pipe two commands, returning the exit status of the first
 * [parallel](parallel.md)	 - Run multiple jobs at once
 * [pee](pee.md)	 - Tee standard input to pipes
