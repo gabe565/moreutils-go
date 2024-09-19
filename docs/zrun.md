@@ -3,7 +3,7 @@
 Automatically decompress arguments to command
 
 ```
-zrun command args [flags]
+zrun command args
 ```
 
 ### Options

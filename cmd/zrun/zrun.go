@@ -26,6 +26,8 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		Short:   "Automatically decompress arguments to command",
 		RunE:    run,
 		GroupID: cmdutil.Applet,
+
+		DisableFlagsInUseLine: true,
 	}
 	cmd.Flags().SetInterspersed(false)
 	for _, opt := range opts {

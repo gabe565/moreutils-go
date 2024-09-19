@@ -3,7 +3,7 @@
 Run a command if the standard input is not empty
 
 ```
-ifne command [flags]
+ifne [flags] command
 ```
 
 ### Options

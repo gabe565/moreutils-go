@@ -3,7 +3,7 @@
 Runs a command quietly unless it fails
 
 ```
-chronic command [flags]
+chronic [flags] command
 ```
 
 ### Options

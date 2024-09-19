@@ -18,11 +18,13 @@ const (
 
 func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     Name + " command",
+		Use:     Name + " [flags] command",
 		Short:   "Run a command if the standard input is not empty",
 		Args:    cobra.MinimumNArgs(1),
 		RunE:    run,
 		GroupID: cmdutil.Applet,
+
+		DisableFlagsInUseLine: true,
 	}
 
 	cmd.Flags().SetInterspersed(false)

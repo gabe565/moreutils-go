@@ -3,7 +3,7 @@
 Run multiple jobs at once
 
 ```
-moreutils parallel command -- arg... [flags]
+moreutils parallel [flags] command -- arg...
 ```
 
 ### Options

@@ -22,11 +22,13 @@ const (
 
 func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     Name + " command -- arg...",
+		Use:     Name + " [flags] command -- arg...",
 		Short:   "Run multiple jobs at once",
 		Args:    cobra.MinimumNArgs(1),
 		RunE:    run,
 		GroupID: cmdutil.Applet,
+
+		DisableFlagsInUseLine: true,
 	}
 
 	cmd.Flags().SetInterspersed(false)

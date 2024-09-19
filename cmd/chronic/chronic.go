@@ -20,11 +20,13 @@ const (
 
 func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     Name + " command",
+		Use:     Name + " [flags] command",
 		Short:   "Runs a command quietly unless it fails",
 		Args:    cobra.MinimumNArgs(1),
 		RunE:    run,
 		GroupID: cmdutil.Applet,
+
+		DisableFlagsInUseLine: true,
 	}
 
 	cmd.Flags().SetInterspersed(false)
