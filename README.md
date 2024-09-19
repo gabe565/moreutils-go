@@ -100,11 +100,11 @@ brew install gabe565/tap/moreutils-go
 <details>
   <summary>Click to expand</summary>
 
-1. Download and run the [latest release binary](https://github.com/gabe565/moreutils-go/releases/latest) for your system and architecture.
+1. Download and run the [latest release binary](https://github.com/gabe565/moreutils/releases/latest) for your system and architecture.
 2. Extract the binary and place it in the desired directory.
 3. Run `moreutils install -sr DIRECTORY` to generate symlinks for each command.
 </details>
 
 ## Rewrite Status
 
-Currently, all commands except for ifdata and lckdo are implemented. Ifdata is still a work-in-progress, and lckdo is deprecated in the original moreutils. Most flags are supported, but some are still being added.
+Currently, all commands except for `ifdata` and `lckdo` are implemented. `ifdata` is still a work-in-progress, and `lckdo` is deprecated in the original moreutils. Most flags are supported, but some are still being added.
