@@ -55,7 +55,7 @@ func run(cmd *cobra.Command, args []string) error {
 			continue
 		}
 
-		if isCompressed(arg) {
+		if getAlgorithm(arg) != algoUnknown {
 			arg, err := decompressTmp(cmd, arg)
 			defer func() {
 				if arg != "" {
@@ -77,13 +77,33 @@ func run(cmd *cobra.Command, args []string) error {
 	return e.Run()
 }
 
-func isCompressed(arg string) bool {
+type algorithm uint8
+
+const (
+	algoUnknown algorithm = iota
+	algoGZIP
+	algoBZIP2
+	algoXZ
+	algoLZMA
+	algoLZOP
+)
+
+func getAlgorithm(arg string) algorithm {
 	ext := filepath.Ext(arg)
-	return strings.EqualFold(ext, ".gz") || ext == ".Z" ||
-		strings.EqualFold(ext, ".bz2") ||
-		strings.EqualFold(ext, ".xz") ||
-		strings.EqualFold(ext, ".lzma") ||
-		strings.EqualFold(ext, ".lzo")
+	switch {
+	case strings.EqualFold(ext, ".gz"), ext == ".Z":
+		return algoGZIP
+	case strings.EqualFold(ext, ".bz2"):
+		return algoBZIP2
+	case strings.EqualFold(ext, ".xz"):
+		return algoXZ
+	case strings.EqualFold(ext, ".lzma"):
+		return algoLZMA
+	case strings.EqualFold(ext, ".lzo"):
+		return algoLZOP
+	default:
+		return algoUnknown
+	}
 }
 
 var ErrUnknownExtension = errors.New("unknown extension")
@@ -107,8 +127,9 @@ func decompressTmp(cmd *cobra.Command, path string) (string, error) {
 		_ = tmp.Close()
 	}()
 
-	switch {
-	case strings.EqualFold(ext, ".gz"), ext == ".Z":
+	algo := getAlgorithm(path)
+	switch algo {
+	case algoGZIP:
 		gzr, err := gzip.NewReader(in)
 		if err != nil {
 			return tmp.Name(), err
@@ -123,14 +144,14 @@ func decompressTmp(cmd *cobra.Command, path string) (string, error) {
 		}
 	default:
 		var args []string
-		switch {
-		case strings.EqualFold(ext, ".bz2"):
+		switch algo {
+		case algoBZIP2:
 			args = []string{"bzip2", "-d", "-c"}
-		case strings.EqualFold(ext, ".xz"):
+		case algoXZ:
 			args = []string{"xz", "-d", "-c"}
-		case strings.EqualFold(ext, ".lzma"):
+		case algoLZMA:
 			args = []string{"lzma", "-d", "-c"}
-		case strings.EqualFold(ext, ".lzo"):
+		case algoLZOP:
 			args = []string{"lzop", "-d", "-c"}
 		default:
 			return tmp.Name(), fmt.Errorf("%w: %s", ErrUnknownExtension, ext)
