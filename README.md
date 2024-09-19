@@ -119,6 +119,31 @@ jobs:
 
 </details>
 
+### Docker
+
+<details>
+  <summary>Click to expand</summary>
+
+A Docker image is available at [`ghcr.io/gabe565/moreutils`](https://ghcr.io/gabe565/moreutils)
+
+In this container, all applets are in the root directory.
+
+#### In a Terminal
+Some commands can be run directly from a terminal:
+```shell
+echo hello world | docker run --rm -i ghcr.io/gabe565/moreutils ts
+```
+
+#### While Building a Container
+If you are building a container and need one of the applets, you can copy them directly to your container during build:
+```dockerfile
+FROM alpine
+COPY --from=ghcr.io/gabe565/moreutils:0 /ts /usr/bin
+CMD echo hello world | ts
+```
+
+</details>
+
 ### Manual Installation
 
 <details>
