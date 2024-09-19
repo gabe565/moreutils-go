@@ -6,12 +6,13 @@ import (
 	"os/exec"
 
 	"github.com/gabe565/moreutils/cmd"
+	"github.com/gabe565/moreutils/cmd/cmdutil"
 )
 
 var version = "beta"
 
 func main() {
-	root := cmd.New(os.Args[0], cmd.WithVersion(version))
+	root := cmd.New(os.Args[0], cmdutil.WithVersion(version))
 	root.SilenceErrors = true
 	if err := root.Execute(); err != nil {
 		var execErr *exec.ExitError

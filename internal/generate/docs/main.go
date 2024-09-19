@@ -31,7 +31,7 @@ func main() {
 		panic(err)
 	}
 
-	opts := []cmdutil.Option{cmd.WithVersion("beta")}
+	opts := []cmdutil.Option{cmdutil.WithVersion("beta")}
 	root := cmd.New(cmd.Name, opts...)
 	cmds := append(slices.Collect(subcommands.Without(nil, opts...)), root)
 	for _, subCmd := range root.Commands() {
