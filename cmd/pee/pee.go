@@ -4,7 +4,7 @@ import (
 	"io"
 	"os/exec"
 
-	"github.com/gabe565/moreutils/cmd/cmdutil"
+	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra"
 )

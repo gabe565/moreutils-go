@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gabe565/moreutils/cmd/cmdutil"
+	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/util"
 	"github.com/ncruces/go-strftime"
 	"github.com/spf13/cobra"

@@ -6,7 +6,7 @@ import (
 	"os/exec"
 
 	"github.com/gabe565/moreutils/cmd"
-	"github.com/gabe565/moreutils/cmd/cmdutil"
+	"github.com/gabe565/moreutils/internal/cmdutil"
 )
 
 var version = "beta"

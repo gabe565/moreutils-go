@@ -6,7 +6,7 @@ import (
 	"errors"
 	"runtime"
 
-	"github.com/gabe565/moreutils/cmd/cmdutil"
+	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/spf13/cobra"
 )
 

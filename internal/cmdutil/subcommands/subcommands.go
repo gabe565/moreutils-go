@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/gabe565/moreutils/cmd/chronic"
-	"github.com/gabe565/moreutils/cmd/cmdutil"
 	"github.com/gabe565/moreutils/cmd/combine"
 	"github.com/gabe565/moreutils/cmd/errno"
 	"github.com/gabe565/moreutils/cmd/ifne"
@@ -21,6 +20,7 @@ import (
 	"github.com/gabe565/moreutils/cmd/vidir"
 	"github.com/gabe565/moreutils/cmd/vipe"
 	"github.com/gabe565/moreutils/cmd/zrun"
+	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/spf13/cobra"
 )
 

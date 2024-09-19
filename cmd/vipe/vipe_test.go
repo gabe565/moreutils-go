@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gabe565/moreutils/cmd/cmdutil"
+	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

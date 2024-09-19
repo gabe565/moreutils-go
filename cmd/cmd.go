@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/gabe565/moreutils/cmd/cmdutil"
-	"github.com/gabe565/moreutils/cmd/cmdutil/subcommands"
 	"github.com/gabe565/moreutils/cmd/install"
+	"github.com/gabe565/moreutils/internal/cmdutil"
+	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
 	"github.com/spf13/cobra"
 )
 

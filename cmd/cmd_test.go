@@ -3,7 +3,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/gabe565/moreutils/cmd/cmdutil/subcommands"
+	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
 	"github.com/stretchr/testify/assert"
 )
 

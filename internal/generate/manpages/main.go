@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/gabe565/moreutils/cmd"
-	"github.com/gabe565/moreutils/cmd/cmdutil/subcommands"
+	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
 	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra/doc"
 	flag "github.com/spf13/pflag"

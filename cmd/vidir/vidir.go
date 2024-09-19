@@ -12,7 +12,7 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/gabe565/moreutils/cmd/cmdutil"
+	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/editor"
 	"github.com/spf13/cobra"
 )
