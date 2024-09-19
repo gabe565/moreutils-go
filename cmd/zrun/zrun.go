@@ -1,7 +1,6 @@
 package zrun
 
 import (
-	"compress/bzip2"
 	"compress/gzip"
 	"errors"
 	"fmt"
@@ -57,7 +56,7 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 
 		if isCompressed(arg) {
-			arg, err := decompressTmp(arg)
+			arg, err := decompressTmp(cmd, arg)
 			defer func() {
 				if arg != "" {
 					_ = os.Remove(arg)
@@ -81,12 +80,15 @@ func run(cmd *cobra.Command, args []string) error {
 func isCompressed(arg string) bool {
 	ext := filepath.Ext(arg)
 	return strings.EqualFold(ext, ".gz") || ext == ".Z" ||
-		strings.EqualFold(ext, ".bz2")
+		strings.EqualFold(ext, ".bz2") ||
+		strings.EqualFold(ext, ".xz") ||
+		strings.EqualFold(ext, ".lzma") ||
+		strings.EqualFold(ext, ".lzo")
 }
 
 var ErrUnknownExtension = errors.New("unknown extension")
 
-func decompressTmp(path string) (string, error) {
+func decompressTmp(cmd *cobra.Command, path string) (string, error) {
 	in, err := os.Open(path)
 	if err != nil {
 		return "", err
@@ -105,27 +107,51 @@ func decompressTmp(path string) (string, error) {
 		_ = tmp.Close()
 	}()
 
-	var r io.ReadCloser
 	switch {
 	case strings.EqualFold(ext, ".gz"), ext == ".Z":
-		var err error
-		r, err = gzip.NewReader(in)
+		gzr, err := gzip.NewReader(in)
 		if err != nil {
 			return tmp.Name(), err
 		}
-	case strings.EqualFold(ext, ".bz2"):
-		r = io.NopCloser(bzip2.NewReader(in))
+
+		if _, err := io.Copy(tmp, gzr); err != nil {
+			return tmp.Name(), err
+		}
+
+		if err := gzr.Close(); err != nil {
+			return tmp.Name(), err
+		}
 	default:
-		return tmp.Name(), fmt.Errorf("%w: %s", ErrUnknownExtension, ext)
+		var args []string
+		switch {
+		case strings.EqualFold(ext, ".bz2"):
+			args = []string{"bzip2", "-d", "-c"}
+		case strings.EqualFold(ext, ".xz"):
+			args = []string{"xz", "-d", "-c"}
+		case strings.EqualFold(ext, ".lzma"):
+			args = []string{"lzma", "-d", "-c"}
+		case strings.EqualFold(ext, ".lzo"):
+			args = []string{"lzop", "-d", "-c"}
+		default:
+			return tmp.Name(), fmt.Errorf("%w: %s", ErrUnknownExtension, ext)
+		}
+
+		if err := execDecompress(args, in, tmp, cmd.ErrOrStderr()); err != nil {
+			return tmp.Name(), err
+		}
 	}
 
-	if _, err := io.Copy(tmp, r); err != nil {
-		return tmp.Name(), err
-	}
-
-	if err := r.Close(); err != nil {
+	if err := tmp.Close(); err != nil {
 		return tmp.Name(), err
 	}
 
 	return tmp.Name(), nil
+}
+
+func execDecompress(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
+	cmd := exec.Command(args[0], args[1:]...)
+	cmd.Stdin = stdin
+	cmd.Stdout = stdout
+	cmd.Stderr = stderr
+	return cmd.Run()
 }
