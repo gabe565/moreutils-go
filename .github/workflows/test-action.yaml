@@ -1,0 +1,38 @@
+name: Test Action
+
+on: push
+
+jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        id: action
+      - name: Check output
+        shell: bash
+        env:
+          VERSION: ${{ steps.action.outputs.version }}
+        run: |
+          if [[ -n "$VERSION" ]]; then
+            echo Got version output: "$VERSION"
+          else
+            echo Version output was empty
+            exit 1
+          fi
+      - name: Binary exists
+        shell: bash
+        run: command -v moreutils
+      - name: Binary runs
+        shell: bash
+        run: moreutils --version
+      - name: Alias exists
+        shell: bash
+        run: command -v ts
+      - name: Alias runs
+        shell: bash
+        run: echo Test | ts

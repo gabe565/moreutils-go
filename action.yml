@@ -1,0 +1,78 @@
+name: Moreutils Go
+description: A collection of the Unix tools that nobody thought to write long ago when Unix was young.
+branding:
+  icon: terminal
+  color: orange
+inputs:
+  token:
+    description: GitHub token
+    default: ${{ github.token }}
+outputs:
+  version:
+    description: The moreutils-go version that was installed
+    value: ${{ steps.install.outputs.version }}
+runs:
+  using: composite
+  steps:
+    - id: install
+      name: Install moreutils-go
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        GH_REPO: ${{ github.action_repository || 'gabe565/moreutils' }}
+        GH_ACTION_REF: ${{ github.action_ref }}
+      run: |
+        set -euo pipefail
+
+        case "${{ runner.os }}" in
+          Linux)
+            OS=linux
+            FILENAME=moreutils
+            ;;
+          macOS)
+            OS=darwin
+            FILENAME=moreutils
+            ;;
+          Windows)
+            OS=windows
+            FILENAME=moreutils.exe
+            ;;
+        esac
+        
+        case "$GH_ACTION_REF" in
+          v*.*.*)
+            RELEASE="$(gh release view --json=name,assets "$GH_ACTION_REF")" ;;
+          v*)
+            GH_ACTION_REF="$(gh release list --json=name | jq -r --arg major "$GH_ACTION_REF" '[.[].name | select(startswith($major))] | first')"
+            RELEASE="$(gh release view --json=name,assets "$GH_ACTION_REF")" ;;
+          *)
+            RELEASE="$(gh release view --json=name,assets)" ;;
+        esac
+        VERSION="$(jq -r '.name' <<<"$RELEASE")"
+        echo "version=$VERSION" >>$GITHUB_OUTPUT
+        echo "Installing moreutils-go $VERSION..."
+
+        DEST="$RUNNER_TEMP/moreutils-go"
+        ASSET="$(jq -r --arg OS "$OS" \
+          '.assets[].name | select(ascii_downcase | test($OS + "_(amd64|x86_64).(tar.gz|zip)$"))' \
+          <<<"$RELEASE" \
+        )"
+
+        echo "Downloading $ASSET"
+        mkdir -p "$DEST"
+        cd "$DEST"
+        case "$ASSET" in
+          *.tar.gz)
+            gh release download "$VERSION" --pattern="$ASSET" --output=- | tar -xzf - "$FILENAME" ;;
+          *.zip)
+            gh release download "$VERSION" --pattern="$ASSET"
+            unzip -o "$ASSET" "$FILENAME"
+            rm "$ASSET"
+            ;;
+          *)
+            echo Invalid file type; exit 1;;
+        esac
+        echo "$DEST" >>$GITHUB_PATH
+
+        echo "Installing links"
+        "$DEST/$FILENAME" install -s "$DEST"
