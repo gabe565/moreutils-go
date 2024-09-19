@@ -95,6 +95,30 @@ brew install gabe565/tap/moreutils-go
 ```
 </details>
 
+### GitHub Actions
+
+<details>
+  <summary>Click to expand</summary>
+
+This repository can be added to a GitHub Actions workflow to install the applets.
+
+#### Example
+```yaml
+name: Example
+
+on: push
+
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: gabe565/moreutils@v0
+      - run: echo hello world | ts
+```
+
+</details>
+
 ### Manual Installation
 
 <details>
