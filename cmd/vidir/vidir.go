@@ -2,6 +2,7 @@ package vidir
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -10,7 +11,6 @@ import (
 	"path/filepath"
 	"slices"
 	"strconv"
-	"strings"
 
 	"github.com/gabe565/moreutils/cmd/cmdutil"
 	"github.com/gabe565/moreutils/internal/editor"
@@ -89,7 +89,7 @@ func run(cmd *cobra.Command, args []string) error {
 
 	scanner := bufio.NewScanner(tmp)
 	for scanner.Scan() {
-		parts := strings.SplitN(strings.TrimSpace(scanner.Text()), "\t", 2)
+		parts := bytes.SplitN(bytes.TrimSpace(scanner.Bytes()), []byte("\t"), 2)
 		switch len(parts) {
 		case 0:
 			continue
@@ -97,7 +97,7 @@ func run(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("%w: %d", ErrFieldCount, len(parts))
 		}
 
-		i, err := strconv.Atoi(parts[0])
+		i, err := strconv.Atoi(string(parts[0]))
 		if err != nil {
 			return err
 		}
@@ -107,7 +107,7 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 
 		oldName := paths[i]
-		newName := parts[1]
+		newName := string(parts[1])
 
 		seen = append(seen, i)
 		if oldName == newName {
