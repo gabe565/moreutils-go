@@ -2,7 +2,6 @@ package mispipe
 
 import (
 	"os/exec"
-	"sync"
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/spf13/cobra"
@@ -40,17 +39,14 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		_ = e2.Run()
-	}()
+	if err := e2.Start(); err != nil {
+		return err
+	}
 
 	if err := e1.Start(); err != nil {
 		return err
 	}
 
-	wg.Wait()
+	_ = e2.Wait()
 	return e1.Wait()
 }
