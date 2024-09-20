@@ -7,6 +7,7 @@ import (
 
 	"github.com/gabe565/moreutils/cmd"
 	"github.com/gabe565/moreutils/internal/cmdutil"
+	"github.com/gabe565/moreutils/internal/util"
 )
 
 var version = "beta"
@@ -19,6 +20,12 @@ func main() {
 		if errors.As(err, &execErr) {
 			os.Exit(execErr.ExitCode())
 		}
+
+		var exitCodeErr *util.ExitCodeError
+		if errors.As(err, &exitCodeErr) {
+			os.Exit(exitCodeErr.ExitCode())
+		}
+
 		root.PrintErrln(root.ErrPrefix(), err.Error())
 		os.Exit(1)
 	}

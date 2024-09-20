@@ -9,8 +9,10 @@ pee command... [flags]
 ### Options
 
 ```
-  -h, --help      help for pee
-  -v, --version   version for pee
+  -h, --help                     help for pee
+      --no-ignore-sigpipe        Do not ignore write errors
+      --no-ignore-write-errors   Do not ignore SIGPIPE errors
+  -v, --version                  version for pee
 ```
 
 ### SEE ALSO
