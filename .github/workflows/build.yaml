@@ -59,7 +59,7 @@ jobs:
         id: vars
         run: |
           args='release --clean'
-          if [[ "$GITHUB_REF" != refs/tags/* ]]; then
+          if [[ "$GITHUB_REF" != refs/tags/* || "$GITHUB_REF_NAME" != v*.*.* ]]; then
             args+=' --snapshot'
           fi
           echo "args=$args" >> $GITHUB_OUTPUT
