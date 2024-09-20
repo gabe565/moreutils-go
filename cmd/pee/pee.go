@@ -9,7 +9,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const Name = "pee"
+const (
+	Name                  = "pee"
+	FlagIgnoreSigpipe     = "ignore-sigpipe"
+	FlagIgnoreWriteErrors = "ignore-write-errors"
+)
 
 func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd := &cobra.Command{
@@ -19,6 +23,16 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		RunE:    run,
 		GroupID: cmdutil.Applet,
 	}
+
+	cmd.Flags().Bool(FlagIgnoreSigpipe, true, "Ignores sigpipe")
+	cmd.Flags().Bool(FlagIgnoreWriteErrors, true, "Ignores write errors")
+	if err := cmd.Flags().MarkHidden(FlagIgnoreSigpipe); err != nil {
+		panic(err)
+	}
+	if err := cmd.Flags().MarkHidden(FlagIgnoreWriteErrors); err != nil {
+		panic(err)
+	}
+
 	for _, opt := range opts {
 		opt(cmd)
 	}
