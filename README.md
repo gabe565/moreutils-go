@@ -154,6 +154,16 @@ CMD echo hello world | ts
 3. Run `moreutils install -sr DIRECTORY` to generate symlinks for each command.
 </details>
 
-## Rewrite Status
+## Differences
 
-Currently, all commands except for `ifdata` and `lckdo` are implemented. `ifdata` is still a work-in-progress, and `lckdo` is deprecated in the original moreutils. Most flags are supported, but some are still being added.
+My goal is 100% compatability, but there are currently some differences compared to moreutils:
+
+| Applet       | Differences                                                                                                                                                                                                                                                            |
+|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **errno**    | Go does not differentiate between errors with the same number like `EAGAIN` and `EWOULDBLOCK`. This causes `errno 35` to always return `EAGAIN`, and `errno EWOULDBLOCK` to return an error. Special cases may be added in the future to handle these more gracefully. |
+| **ifdata**   | This command is not yet implemented, but will be included in a future release.                                                                                                                                                                                         |
+| **isutf8**   | Unlike moreutils, which prints the expected value range for non-UTF-8 files, the rewrite only logs the offending line, byte, and char.                                                                                                                                 |
+| **lckdo**    | Deprecated in moreutils and intentionally not implemented here. It is recommended to use `flock` as a replacement.                                                                                                                                                     |
+| **parallel** | The `-l` flag is not yet supported. Also note parallel is not symlinked by default since [GNU Parallel](https://www.gnu.org/software/parallel/) is typically preferred.                                                                                                |
+| **pee**      | The flags `--ignore-sigpipe` and `--ignore-write-errors` are not yet supported.                                                                                                                                                                                        |
+| **ts**       | The flags `-r`, `-i`, and `-s` are not yet supported. The `-m` flag will trigger a deprecation warning since Go always uses the system's monotonic clock.                                                                                                              |
