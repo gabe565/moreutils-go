@@ -14,6 +14,7 @@ import (
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/editor"
+	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra"
 )
 
@@ -57,11 +58,7 @@ func run(cmd *cobra.Command, args []string) error {
 		_ = os.Remove(tmp.Name())
 	}()
 
-	recursive, err := cmd.Flags().GetBool(FlagRecursive)
-	if err != nil {
-		panic(err)
-	}
-
+	recursive := util.Must2(cmd.Flags().GetBool(FlagRecursive))
 	paths, err := createListing(tmp, args, recursive)
 	if err != nil {
 		return err
@@ -81,11 +78,7 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	verbose, err := cmd.Flags().GetBool(FlagVerbose)
-	if err != nil {
-		panic(err)
-	}
-
+	verbose := util.Must2(cmd.Flags().GetBool(FlagVerbose))
 	seen := make([]int, 0, len(paths))
 
 	scanner := bufio.NewScanner(tmp)

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra"
 	"golang.org/x/sys/unix"
 )
@@ -24,9 +25,7 @@ var (
 func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
-	if list, err := cmd.Flags().GetBool(FlagList); err != nil {
-		panic(err)
-	} else if list {
+	if util.Must2(cmd.Flags().GetBool(FlagList)) {
 		for errno, name := range iterErrnos() {
 			if err := printErrno(cmd.OutOrStdout(), name, errno); err != nil {
 				return err
@@ -35,9 +34,7 @@ func run(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	if search, err := cmd.Flags().GetBool(FlagSearch); err != nil {
-		panic(err)
-	} else if search {
+	if util.Must2(cmd.Flags().GetBool(FlagSearch)) {
 		var searchStr string
 		if len(args) != 0 {
 			searchStr = strings.ToLower(args[0])

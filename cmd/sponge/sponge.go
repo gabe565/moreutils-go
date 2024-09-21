@@ -69,12 +69,7 @@ func run(cmd *cobra.Command, args []string) error {
 		out = tmp
 	}
 
-	appendMode, err := cmd.Flags().GetBool(FlagAppend)
-	if err != nil {
-		panic(err)
-	}
-
-	if appendMode {
+	if util.Must2(cmd.Flags().GetBool(FlagAppend)) {
 		if in, err := os.Open(args[0]); err != nil {
 			if !os.IsNotExist(err) {
 				return err

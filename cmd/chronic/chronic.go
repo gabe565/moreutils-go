@@ -42,15 +42,8 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
-	onStderr, err := cmd.Flags().GetBool(FlagStderr)
-	if err != nil {
-		panic(err)
-	}
-
-	verbose, err := cmd.Flags().GetBool(FlagVerbose)
-	if err != nil {
-		panic(err)
-	}
+	onStderr := util.Must2(cmd.Flags().GetBool(FlagStderr))
+	verbose := util.Must2(cmd.Flags().GetBool(FlagVerbose))
 
 	e := exec.Command(args[0], args[1:]...)
 	e.Stdin = cmd.InOrStdin()

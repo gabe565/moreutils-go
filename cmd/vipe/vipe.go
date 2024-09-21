@@ -41,10 +41,7 @@ func run(cmd *cobra.Command, _ []string) error {
 	}
 	cmd.SilenceUsage = true
 
-	suffix, err := cmd.Flags().GetString(FlagSuffix)
-	if err != nil {
-		panic(err)
-	}
+	suffix := util.Must2(cmd.Flags().GetString(FlagSuffix))
 	if suffix != "" && !strings.HasPrefix(suffix, ".") {
 		suffix = "." + suffix
 	}

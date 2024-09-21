@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
+	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 )
@@ -58,15 +59,8 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	numArgs, err := cmd.Flags().GetInt(FlagNumArgs)
-	if err != nil {
-		panic(err)
-	}
-
-	replace, err := cmd.Flags().GetBool(FlagReplace)
-	if err != nil {
-		panic(err)
-	}
+	numArgs := util.Must2(cmd.Flags().GetInt(FlagNumArgs))
+	replace := util.Must2(cmd.Flags().GetBool(FlagReplace))
 
 	var group errgroup.Group
 	group.SetLimit(numJobs)
@@ -98,11 +92,7 @@ func buildCmd(args []string, arg []string, replace bool) []string {
 }
 
 func parseNumJobs(cmd *cobra.Command) (int, error) {
-	numJobsStr, err := cmd.Flags().GetString(FlagJobs)
-	if err != nil {
-		panic(err)
-	}
-
+	numJobsStr := util.Must2(cmd.Flags().GetString(FlagJobs))
 	var jobs int
 	if strings.HasSuffix(numJobsStr, "%") {
 		pct, err := strconv.Atoi(strings.TrimSuffix(numJobsStr, "%"))
@@ -112,8 +102,8 @@ func parseNumJobs(cmd *cobra.Command) (int, error) {
 
 		jobs = runtime.NumCPU() * pct / 100
 	} else {
-		jobs, err = strconv.Atoi(numJobsStr)
-		if err != nil {
+		var err error
+		if jobs, err = strconv.Atoi(numJobsStr); err != nil {
 			return 0, err
 		}
 	}

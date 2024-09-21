@@ -10,7 +10,6 @@ import (
 	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra"
-	flag "github.com/spf13/pflag"
 )
 
 const (
@@ -51,23 +50,11 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
-	ignoreSigpipe, ignoreWriteErrs := true, true
-	cmd.Flags().Visit(func(f *flag.Flag) {
-		switch f.Name {
-		case FlagIgnoreSigpipe:
-			ignoreSigpipe = true
-		case FlagNoIgnoreSigpipe:
-			ignoreSigpipe = false
-		case FlagIgnoreWriteErrors:
-			ignoreWriteErrs = true
-		case FlagNoIgnoreWriteErrors:
-			ignoreWriteErrs = false
-		}
-	})
-
-	if ignoreSigpipe {
+	if util.Must2(cmd.Flags().GetBool(FlagIgnoreSigpipe)) && !util.Must2(cmd.Flags().GetBool(FlagNoIgnoreSigpipe)) {
 		signal.Ignore(syscall.SIGPIPE)
 	}
+
+	ignoreWriteErrs := util.Must2(cmd.Flags().GetBool(FlagIgnoreWriteErrors)) && !util.Must2(cmd.Flags().GetBool(FlagNoIgnoreWriteErrors))
 
 	cmds := make([]*exec.Cmd, 0, len(args))
 	pipes := make([]io.Writer, 0, len(args))

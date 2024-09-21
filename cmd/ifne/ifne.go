@@ -42,10 +42,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 	cmd.SilenceUsage = true
 
-	invert, err := cmd.Flags().GetBool(FlagInvert)
-	if err != nil {
-		panic(err)
-	}
+	invert := util.Must2(cmd.Flags().GetBool(FlagInvert))
 
 	r := bufio.NewReader(cmd.InOrStdin())
 	willRun, err := shouldRun(r, invert)

@@ -55,22 +55,10 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	force, err := cmd.Flags().GetBool(FlagForce)
-	if err != nil {
-		panic(err)
-	}
+	force := util.Must2(cmd.Flags().GetBool(FlagForce))
+	symbolic := util.Must2(cmd.Flags().GetBool(FlagSymbolic))
 
-	symbolic, err := cmd.Flags().GetBool(FlagSymbolic)
-	if err != nil {
-		panic(err)
-	}
-
-	relative, err := cmd.Flags().GetBool(FlagRelative)
-	if err != nil {
-		panic(err)
-	}
-
-	if relative {
+	if util.Must2(cmd.Flags().GetBool(FlagRelative)) {
 		dstAbs, err := filepath.Abs(dst)
 		if err != nil {
 			return err
@@ -84,10 +72,7 @@ func run(cmd *cobra.Command, args []string) error {
 		src = filepath.Join(relPath, filepath.Base(src))
 	}
 
-	excludes, err := cmd.Flags().GetStringSlice(FlagExclude)
-	if err != nil {
-		panic(err)
-	}
+	excludes := util.Must2(cmd.Flags().GetStringSlice(FlagExclude))
 
 	var errs []error
 	for subCmd := range subcommands.Without(excludes) {
