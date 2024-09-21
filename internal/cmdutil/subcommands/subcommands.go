@@ -26,15 +26,10 @@ import (
 )
 
 func All(opts ...cmdutil.Option) []*cobra.Command {
-	cmds := make([]*cobra.Command, 0, 12)
-	cmds = append(cmds,
+	return []*cobra.Command{
 		chronic.New(opts...),
 		combine.New(opts...),
-	)
-	if errno.Supported {
-		cmds = append(cmds, errno.New(opts...))
-	}
-	cmds = append(cmds,
+		errno.New(opts...),
 		ifne.New(opts...),
 		isutf8.New(opts...),
 		mispipe.New(opts...),
@@ -45,8 +40,7 @@ func All(opts ...cmdutil.Option) []*cobra.Command {
 		vidir.New(opts...),
 		vipe.New(opts...),
 		zrun.New(opts...),
-	)
-	return cmds
+	}
 }
 
 func DefaultExcludes() []string {
@@ -78,9 +72,7 @@ func Choose(name string, opts ...cmdutil.Option) (*cobra.Command, error) {
 	case combine.Name, combine.Alias:
 		return combine.New(opts...), nil
 	case errno.Name:
-		if errno.Supported {
-			return errno.New(opts...), nil
-		}
+		return errno.New(opts...), nil
 	case ifne.Name:
 		return ifne.New(opts...), nil
 	case isutf8.Name:
