@@ -12,6 +12,7 @@ Some of the original moreutils commands require Perl, so I decided to rewrite th
 - **[chronic](docs/chronic.md)**: Runs a command quietly unless it fails
 - **[combine](docs/combine.md)**: Combine sets of lines from two files using boolean operations
 - **[errno](docs/errno.md)**: Look up errno names and descriptions
+- **[ifdata](docs/ifdata.md)**: Get network interface info without parsing ifconfig output
 - **[ifne](docs/ifne.md)**: Run a command if the standard input is not empty
 - **[isutf8](docs/isutf8.md)**: Check whether files are valid UTF-8
 - **[mispipe](docs/mispipe.md)**: Pipe two commands, returning the exit status of the first
@@ -161,7 +162,7 @@ My goal is 100% compatability, but there are currently some differences compared
 | Applet       | Differences                                                                                                                                                                                                                                                            |
 |--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **errno**    | Go does not differentiate between errors with the same number like `EAGAIN` and `EWOULDBLOCK`. This causes `errno 35` to always return `EAGAIN`, and `errno EWOULDBLOCK` to return an error. Special cases may be added in the future to handle these more gracefully. |
-| **ifdata**   | This command is not yet implemented, but will be included in a future release.                                                                                                                                                                                         |
+| **ifdata**   | The `-ph` and `-pf` flags now support all operating systems, but the other Linux-specific flags are not currently supported.                                                                                                                                           |
 | **isutf8**   | Unlike moreutils, which prints the expected value range for non-UTF-8 files, the rewrite only logs the offending line, byte, and char.                                                                                                                                 |
 | **lckdo**    | Deprecated in moreutils and intentionally not implemented here. It is recommended to use `flock` as a replacement.                                                                                                                                                     |
 | **parallel** | The `-l` flag is not yet supported. Also note parallel is not symlinked by default since [GNU Parallel](https://www.gnu.org/software/parallel/) is typically preferred.                                                                                                |

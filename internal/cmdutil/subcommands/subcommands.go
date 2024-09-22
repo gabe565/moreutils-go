@@ -11,6 +11,7 @@ import (
 	"github.com/gabe565/moreutils/cmd/chronic"
 	"github.com/gabe565/moreutils/cmd/combine"
 	"github.com/gabe565/moreutils/cmd/errno"
+	"github.com/gabe565/moreutils/cmd/ifdata"
 	"github.com/gabe565/moreutils/cmd/ifne"
 	"github.com/gabe565/moreutils/cmd/isutf8"
 	"github.com/gabe565/moreutils/cmd/mispipe"
@@ -30,6 +31,7 @@ func All(opts ...cmdutil.Option) []*cobra.Command {
 		chronic.New(opts...),
 		combine.New(opts...),
 		errno.New(opts...),
+		ifdata.New(opts...),
 		ifne.New(opts...),
 		isutf8.New(opts...),
 		mispipe.New(opts...),
@@ -73,6 +75,8 @@ func Choose(name string, opts ...cmdutil.Option) (*cobra.Command, error) {
 		return combine.New(opts...), nil
 	case errno.Name:
 		return errno.New(opts...), nil
+	case ifdata.Name:
+		return ifdata.New(opts...), nil
 	case ifne.Name:
 		return ifne.New(opts...), nil
 	case isutf8.Name:
