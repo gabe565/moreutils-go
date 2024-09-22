@@ -11,6 +11,7 @@ import (
 	"github.com/gabe565/moreutils/cmd"
 	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
+	"github.com/gabe565/moreutils/internal/generate/seealsoreplacer"
 	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra/doc"
 )
@@ -58,7 +59,7 @@ func main() {
 		w := io.Writer(out)
 		if subCmd.Name() == cmd.Name {
 			// Replace "See Also" section in root command
-			w = &seeAlsoWriter{w: w}
+			w = seealsoreplacer.New(w, "### SEE ALSO\n", subcommands.All())
 		}
 
 		if err := doc.GenMarkdown(subCmd, w); err != nil {
@@ -107,26 +108,4 @@ func main() {
 	if err := os.WriteFile("README.md", readmeContents, 0o644); err != nil {
 		panic(err)
 	}
-}
-
-type seeAlsoWriter struct {
-	w       io.Writer
-	replace bool
-}
-
-func (s *seeAlsoWriter) Write(p []byte) (int, error) {
-	const seeAlsoLine = "### SEE ALSO"
-	if bytes.Contains(p, []byte(seeAlsoLine)) {
-		s.replace = true
-		n := len(p)
-		headerIdx := bytes.Index(p, []byte(seeAlsoLine))
-		p, temp := p[:headerIdx], p[headerIdx:]
-		for _, subCmd := range subcommands.All() {
-			temp = bytes.ReplaceAll(temp, []byte(cmd.Name+" "+subCmd.Name()), []byte(subCmd.Name()))
-			temp = bytes.ReplaceAll(temp, []byte(cmd.Name+"_"+subCmd.Name()), []byte(subCmd.Name()))
-		}
-		_, err := s.w.Write(append(p, temp...))
-		return n, err
-	}
-	return s.w.Write(p)
 }
