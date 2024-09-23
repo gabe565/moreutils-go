@@ -113,9 +113,11 @@ func run(cmd *cobra.Command, args []string) error {
 func newFormatter(src string) (*strftime.Strftime, error) {
 	src = strings.ReplaceAll(src, "%.S", "%S.%f")
 	src = strings.ReplaceAll(src, "%.T", "%T.%f")
+	src = strings.ReplaceAll(src, "%.s", "%s.%f")
 
 	return strftime.New(src,
 		strftime.WithMilliseconds('L'),
 		strftime.WithMicroseconds('f'),
+		strftime.WithUnixSeconds('s'),
 	)
 }
