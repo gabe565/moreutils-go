@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -32,4 +33,21 @@ func TestTs(t *testing.T) {
 			assert.Equal(t, tt.want, stdout.String())
 		})
 	}
+}
+
+func Test_validArgs(t *testing.T) {
+	t.Run("default", func(t *testing.T) {
+		cmd := New()
+		got, directive := validArgs(cmd, nil, "")
+		assert.NotEqual(t, cobra.ShellCompDirectiveError, directive)
+		assert.NotEmpty(t, got)
+	})
+
+	t.Run("increment flag", func(t *testing.T) {
+		cmd := New()
+		require.NoError(t, cmd.Flags().Set(FlagIncrement, "true"))
+		got, directive := validArgs(cmd, nil, "")
+		assert.NotEqual(t, cobra.ShellCompDirectiveError, directive)
+		assert.NotEmpty(t, got)
+	})
 }
