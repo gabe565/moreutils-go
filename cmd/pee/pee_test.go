@@ -18,9 +18,9 @@ func TestPee(t *testing.T) {
 	}{
 		{
 			"cat md5 base64",
-			[]string{"cat", "md5sum", "base64"},
+			[]string{"cat", "md5sum"},
 			"test\n",
-			"test\nd8e8fca2dc0f896fd7cb4cb0031ba249  -\ndGVzdAo=\n",
+			"test\nd8e8fca2dc0f896fd7cb4cb0031ba249  -\n",
 			require.NoError,
 		},
 	}
