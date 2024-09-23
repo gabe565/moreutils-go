@@ -3,6 +3,7 @@ package ts
 import (
 	"bufio"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
@@ -41,13 +42,19 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 func validArgs(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 	completions := []string{
 		"%b %e %H:%M:%S",
+		"%b %e %H:%M:%.S",
 		"%a %b %e %H:%M:%S %Y",
 		"%Y-%m-%d %H:%M:%S",
+		"%Y-%m-%d %H:%M:%.S",
 		"%Y-%m-%dT%H:%M:%S%z",
 	}
 	now := time.Now()
 	for i, completion := range completions {
-		completions[i] += "\t" + strftime.Format(completion, now)
+		format, err := convertFormat(completion)
+		if err != nil {
+			return nil, cobra.ShellCompDirectiveError
+		}
+		completions[i] += "\t" + now.Format(format)
 	}
 	return completions, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveKeepOrder
 }
@@ -59,9 +66,10 @@ func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
 	format := time.DateTime
-	if len(args) > 0 {
+	if len(args) != 0 {
 		var err error
-		if format, err = strftime.Layout(args[0]); err != nil {
+		format, err = convertFormat(args[0])
+		if err != nil {
 			return err
 		}
 	}
@@ -71,4 +79,19 @@ func run(cmd *cobra.Command, args []string) error {
 		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n", time.Now().Format(format), scanner.Bytes())
 	}
 	return scanner.Err()
+}
+
+func convertFormat(src string) (string, error) {
+	const secWithMs = "\x1bSEC_WITH_MS"
+
+	src = strings.ReplaceAll(src, "%.S", secWithMs)
+	src = strings.ReplaceAll(src, "%.T", "%H:%M:"+secWithMs)
+
+	var err error
+	if src, err = strftime.Layout(src); err != nil {
+		return "", err
+	}
+
+	src = strings.ReplaceAll(src, secWithMs, "05.000000")
+	return src, nil
 }
