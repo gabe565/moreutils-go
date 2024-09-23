@@ -19,7 +19,7 @@ func TestTs(t *testing.T) {
 	}{
 		{"no format", nil, "test\n", time.Now().Format(time.DateTime) + " test\n", require.NoError},
 		{"format stamp", []string{"%b %e %H:%M:%S"}, "test\n", time.Now().Format(time.Stamp) + " test\n", require.NoError},
-		{"invalid format", []string{"%f"}, "test\n", "", require.Error},
+		{"invalid format", []string{"%g"}, "test\n", "", require.Error},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/util"
-	"github.com/ncruces/go-strftime"
+	"github.com/lestrrat-go/strftime"
 	"github.com/spf13/cobra"
 )
 
@@ -62,11 +62,11 @@ func validArgs(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellC
 	}
 	now := time.Now()
 	for i, completion := range completions {
-		format, err := convertFormat(completion)
+		formatter, err := newFormatter(completion)
 		if err != nil {
 			return nil, cobra.ShellCompDirectiveError
 		}
-		completions[i] += "\t" + now.Format(format)
+		completions[i] += "\t" + formatter.FormatString(now)
 	}
 	return completions, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveKeepOrder
 }
@@ -80,16 +80,16 @@ func run(cmd *cobra.Command, args []string) error {
 	increment := util.Must2(cmd.Flags().GetBool(FlagIncrement))
 	sinceStart := util.Must2(cmd.Flags().GetBool(FlagSinceStart))
 
-	format := time.DateTime
+	format := "%Y-%m-%d %H:%M:%S"
 	switch {
 	case len(args) != 0:
-		var err error
-		format, err = convertFormat(args[0])
-		if err != nil {
-			return err
-		}
+		format = args[0]
 	case increment, sinceStart:
-		format = time.TimeOnly
+		format = "%H:%M:%S"
+	}
+	formatter, err := newFormatter(format)
+	if err != nil {
+		return err
 	}
 
 	start := time.Now()
@@ -102,22 +102,20 @@ func run(cmd *cobra.Command, args []string) error {
 				start = time.Now()
 			}
 		}
-		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n", ts.Format(format), scanner.Bytes())
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n",
+			formatter.FormatString(ts),
+			scanner.Bytes(),
+		)
 	}
 	return scanner.Err()
 }
 
-func convertFormat(src string) (string, error) {
-	const secWithMs = "\x1bSEC_WITH_MS"
+func newFormatter(src string) (*strftime.Strftime, error) {
+	src = strings.ReplaceAll(src, "%.S", "%S.%f")
+	src = strings.ReplaceAll(src, "%.T", "%T.%f")
 
-	src = strings.ReplaceAll(src, "%.S", secWithMs)
-	src = strings.ReplaceAll(src, "%.T", "%H:%M:"+secWithMs)
-
-	var err error
-	if src, err = strftime.Layout(src); err != nil {
-		return "", err
-	}
-
-	src = strings.ReplaceAll(src, secWithMs, "05.000000")
-	return src, nil
+	return strftime.New(src,
+		strftime.WithMilliseconds('L'),
+		strftime.WithMicroseconds('f'),
+	)
 }
