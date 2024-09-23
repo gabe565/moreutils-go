@@ -47,17 +47,17 @@ func validArgs(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellC
 	var completions []string
 	if util.Must2(cmd.Flags().GetBool(FlagIncrement)) || util.Must2(cmd.Flags().GetBool(FlagSinceStart)) {
 		completions = append(completions,
-			"%H:%M:%S",
-			"%H:%M:%.S",
+			"%T",
+			"%.T",
 		)
 	} else {
 		completions = []string{
-			"%b %e %H:%M:%S",
-			"%b %e %H:%M:%.S",
-			"%a %b %e %H:%M:%S %Y",
-			"%Y-%m-%d %H:%M:%S",
-			"%Y-%m-%d %H:%M:%.S",
-			"%Y-%m-%dT%H:%M:%S%z",
+			"%b %e %T",
+			"%b %e %.T",
+			"%a %b %e %T %Y",
+			"%F %T",
+			"%F %.T",
+			"%FT%T%z",
 		}
 	}
 	now := time.Now()
