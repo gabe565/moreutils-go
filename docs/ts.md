@@ -9,8 +9,10 @@ ts [format] [flags]
 ### Options
 
 ```
-  -h, --help      help for ts
-  -v, --version   version for ts
+  -h, --help          help for ts
+  -i, --increment     Timestamps will be the time elapsed since the last log
+  -s, --since-start   Timestamps will be the time elapsed since start of the program
+  -v, --version       version for ts
 ```
 
 ### SEE ALSO

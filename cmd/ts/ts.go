@@ -13,8 +13,10 @@ import (
 )
 
 const (
-	Name          = "ts"
-	FlagMonotonic = "monotonic"
+	Name           = "ts"
+	FlagMonotonic  = "monotonic"
+	FlagIncrement  = "increment"
+	FlagSinceStart = "since-start"
 )
 
 func New(opts ...cmdutil.Option) *cobra.Command {
@@ -29,6 +31,8 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	}
 
 	cmd.Flags().BoolP(FlagMonotonic, "m", false, "Use the system's monotonic clock")
+	cmd.Flags().BoolP(FlagIncrement, "i", false, "Timestamps will be the time elapsed since the last log")
+	cmd.Flags().BoolP(FlagSinceStart, "s", false, "Timestamps will be the time elapsed since start of the program")
 	if err := cmd.Flags().MarkHidden(FlagMonotonic); err != nil {
 		panic(err)
 	}
@@ -39,14 +43,22 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	return cmd
 }
 
-func validArgs(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-	completions := []string{
-		"%b %e %H:%M:%S",
-		"%b %e %H:%M:%.S",
-		"%a %b %e %H:%M:%S %Y",
-		"%Y-%m-%d %H:%M:%S",
-		"%Y-%m-%d %H:%M:%.S",
-		"%Y-%m-%dT%H:%M:%S%z",
+func validArgs(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+	var completions []string
+	if util.Must2(cmd.Flags().GetBool(FlagIncrement)) || util.Must2(cmd.Flags().GetBool(FlagSinceStart)) {
+		completions = append(completions,
+			"%H:%M:%S",
+			"%H:%M:%.S",
+		)
+	} else {
+		completions = []string{
+			"%b %e %H:%M:%S",
+			"%b %e %H:%M:%.S",
+			"%a %b %e %H:%M:%S %Y",
+			"%Y-%m-%d %H:%M:%S",
+			"%Y-%m-%d %H:%M:%.S",
+			"%Y-%m-%dT%H:%M:%S%z",
+		}
 	}
 	now := time.Now()
 	for i, completion := range completions {
@@ -65,18 +77,32 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 	cmd.SilenceUsage = true
 
+	increment := util.Must2(cmd.Flags().GetBool(FlagIncrement))
+	sinceStart := util.Must2(cmd.Flags().GetBool(FlagSinceStart))
+
 	format := time.DateTime
-	if len(args) != 0 {
+	switch {
+	case len(args) != 0:
 		var err error
 		format, err = convertFormat(args[0])
 		if err != nil {
 			return err
 		}
+	case increment, sinceStart:
+		format = time.TimeOnly
 	}
 
+	start := time.Now()
 	scanner := bufio.NewScanner(cmd.InOrStdin())
 	for scanner.Scan() {
-		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n", time.Now().Format(format), scanner.Bytes())
+		ts := time.Now()
+		if increment || sinceStart {
+			ts = time.Unix(0, 0).UTC().Add(time.Since(start))
+			if increment {
+				start = time.Now()
+			}
+		}
+		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n", ts.Format(format), scanner.Bytes())
 	}
 	return scanner.Err()
 }
