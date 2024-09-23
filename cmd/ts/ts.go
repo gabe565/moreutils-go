@@ -28,7 +28,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	}
 
 	cmd.Flags().BoolP(FlagMonotonic, "m", false, "Use the system's monotonic clock")
-	if err := cmd.Flags().MarkDeprecated(FlagMonotonic, "the monotonic clock is always used"); err != nil {
+	if err := cmd.Flags().MarkHidden(FlagMonotonic); err != nil {
 		panic(err)
 	}
 
