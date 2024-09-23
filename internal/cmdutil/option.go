@@ -11,7 +11,7 @@ func WithVersion(version string) Option {
 	}
 }
 
-const DisableTTYAnnotation = "without"
+const DisableTTYAnnotation = "disable-tty"
 
 func DisableTTY() Option {
 	return func(cmd *cobra.Command) {
