@@ -11,6 +11,7 @@ moreutils parallel [flags] command -- arg...
 ```
   -h, --help           help for parallel
   -j, --jobs string    Number of jobs to run in parallel. Can be a number or a percentage of CPU cores. (default "10")
+  -l, --load float     Wait until the system's load average is below a limit before starting jobs
   -n, --num-args int   Number of arguments to pass to a command at a time. Default is 1. Incompatible with -i (default 1)
   -i, --replace        Normally the argument is added to the end of the command. With this option, instances of "{}" in the command are replaced with the argument.
 ```

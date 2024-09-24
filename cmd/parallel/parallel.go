@@ -1,14 +1,18 @@
 package parallel
 
 import (
+	"context"
 	"errors"
+	"log/slog"
 	"os/exec"
 	"runtime"
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
+	"github.com/gabe565/moreutils/internal/loadavg"
 	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
@@ -17,6 +21,7 @@ import (
 const (
 	Name        = "parallel"
 	FlagJobs    = "jobs"
+	FlagLoad    = "load"
 	FlagReplace = "replace"
 	FlagNumArgs = "num-args"
 )
@@ -34,9 +39,16 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 
 	cmd.Flags().SetInterspersed(false)
 	cmd.Flags().StringP(FlagJobs, "j", strconv.Itoa(runtime.NumCPU()), "Number of jobs to run in parallel. Can be a number or a percentage of CPU cores.")
+	cmd.Flags().Float64P(FlagLoad, "l", 0, "Wait until the system's load average is below a limit before starting jobs")
 	cmd.Flags().BoolP(FlagReplace, "i", false, `Normally the argument is added to the end of the command. With this option, instances of "{}" in the command are replaced with the argument.`)
 	cmd.Flags().IntP(FlagNumArgs, "n", 1, "Number of arguments to pass to a command at a time. Default is 1. Incompatible with -i")
 	cmd.MarkFlagsMutuallyExclusive(FlagReplace, FlagNumArgs)
+
+	if !loadavg.Supported {
+		if err := cmd.Flags().MarkHidden(FlagLoad); err != nil {
+			panic(err)
+		}
+	}
 
 	for _, opt := range opts {
 		opt(cmd)
@@ -62,11 +74,21 @@ func run(cmd *cobra.Command, args []string) error {
 	numArgs := util.Must2(cmd.Flags().GetInt(FlagNumArgs))
 	replace := util.Must2(cmd.Flags().GetBool(FlagReplace))
 
+	maxLoad := util.Must2(cmd.Flags().GetFloat64(FlagLoad))
+	loadAvg := loadavg.New()
+
 	var group errgroup.Group
 	group.SetLimit(numJobs)
 
 	execCmd := args[:sepIdx]
 	for args := range slices.Chunk(args[sepIdx+1:], numArgs) {
+		if maxLoad != 0 {
+			if err := loadAvg.WaitBelow(context.Background(), maxLoad, time.Second); err != nil {
+				slog.Error("Failed to determine loadavg. Try again without -l")
+				return err
+			}
+		}
+
 		group.Go(func() error {
 			execCmd := buildCmd(execCmd, args, replace)
 			e := exec.Command(execCmd[0], execCmd[1:]...)
