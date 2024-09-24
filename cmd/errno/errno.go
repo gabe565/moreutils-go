@@ -1,6 +1,8 @@
 package errno
 
 import (
+	"errors"
+
 	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/spf13/cobra"
 )
@@ -9,6 +11,11 @@ const (
 	Name       = "errno"
 	FlagList   = "list"
 	FlagSearch = "search"
+)
+
+var (
+	ErrUnknownNo = errors.New("unknown errno")
+	ErrUnknown   = errors.New("unknown err name")
 )
 
 func New(opts ...cmdutil.Option) *cobra.Command {

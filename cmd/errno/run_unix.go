@@ -1,9 +1,6 @@
-//go:build aix || darwin || dragonfly || freebsd || linux || netbsd || openbsd || solaris || zos
-
 package errno
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"iter"
@@ -16,11 +13,6 @@ import (
 )
 
 const Supported = true
-
-var (
-	ErrUnknownNo = errors.New("unknown errno")
-	ErrUnknown   = errors.New("unknown err name")
-)
 
 func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
