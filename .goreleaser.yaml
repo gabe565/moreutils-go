@@ -2,9 +2,9 @@ version: 2
 project_name: moreutils-go
 before:
   hooks:
-    - go run ./internal/generate/completions --date={{ .CommitDate }}
+    - go run ./internal/generate/completions
     - go run ./internal/generate/manpages --version={{ .Version }} --date={{ .CommitDate }}
-    - go run ./internal/generate/links --date={{ .CommitTimestamp }}
+    - go run ./internal/generate/links
 builds:
   - binary: moreutils
     env:
@@ -28,12 +28,24 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+    builds_info:
+      group: 0
+      owner: 0
     files:
-      - LICENSE
-      - README.md
-      - manpages/*
-      - completions/*
-      - links/*
+      - src: LICENSE
+        info: &info
+          owner: 0
+          group: 0
+          mtime: "{{.CommitDate}}"
+          mode: 0644
+      - src: README.md
+        info: *info
+      - src: manpages/*
+        info: *info
+      - src: completions/*
+        info: *info
+      - src: links/*
+        info: *info
 checksum:
   name_template: "checksums.txt"
 snapshot:

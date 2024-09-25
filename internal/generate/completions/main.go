@@ -4,7 +4,6 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
-	"time"
 
 	"github.com/gabe565/moreutils/cmd"
 	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
@@ -20,15 +19,7 @@ const (
 func main() {
 	flags := flag.NewFlagSet("", flag.ContinueOnError)
 
-	var dateParam string
-	flags.StringVar(&dateParam, "date", time.Now().Format(time.RFC3339), "Build date")
-
 	if err := flags.Parse(os.Args); err != nil {
-		panic(err)
-	}
-
-	date, err := time.Parse(time.RFC3339, dateParam)
-	if err != nil {
 		panic(err)
 	}
 
@@ -64,10 +55,6 @@ func main() {
 				if err := subCmd.GenFishCompletionFile(path, true); err != nil {
 					panic(err)
 				}
-			}
-
-			if err := os.Chtimes(path, date, date); err != nil {
-				panic(err)
 			}
 		}
 	}
