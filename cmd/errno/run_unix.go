@@ -27,10 +27,11 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	if util.Must2(cmd.Flags().GetBool(FlagSearch)) {
-		var searchStr string
-		if len(args) != 0 {
-			searchStr = strings.ToLower(args[0])
+		if len(args) == 0 {
+			cmd.SilenceUsage = false
+			return cobra.ExactArgs(1)(cmd, args)
 		}
+		searchStr := strings.ToLower(args[0])
 		for e := range errno.Iter() {
 			if strings.Contains(e.Error(), searchStr) {
 				if err := printErrno(cmd, e); err != nil {
@@ -39,6 +40,11 @@ func run(cmd *cobra.Command, args []string) error {
 			}
 		}
 		return nil
+	}
+
+	if len(args) == 0 {
+		cmd.SilenceUsage = false
+		return cobra.ExactArgs(1)(cmd, args)
 	}
 
 	if len(args) == 0 {
