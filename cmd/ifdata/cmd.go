@@ -79,7 +79,7 @@ func run(cmd *cobra.Command, args []string) error {
 
 	if len(args) == 0 {
 		// Error is suppressed when "-h" is provided with no flags
-		if hardwareAddress || cmd.Flags().NFlag() == 0 {
+		if hardwareAddress {
 			return cmd.Usage()
 		}
 		return cobra.ExactArgs(1)(cmd, args)
