@@ -2,6 +2,8 @@ module github.com/gabe565/moreutils
 
 go 1.23.1
 
+replace github.com/gravwell/gravwell/v3 => github.com/gabe565/gravwell/v3 v3.0.0-20240927080051-af89d2bfd634
+
 require (
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/gravwell/gravwell/v3 v3.8.40

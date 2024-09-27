@@ -41,6 +41,9 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		panic(err)
 	}
 
+	cmd.MarkFlagsMutuallyExclusive(FlagIncrement, FlagRelative)
+	cmd.MarkFlagsMutuallyExclusive(FlagSinceStart, FlagRelative)
+
 	for _, opt := range opts {
 		opt(cmd)
 	}
