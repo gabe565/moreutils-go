@@ -11,6 +11,8 @@ import (
 )
 
 func TestTs(t *testing.T) {
+	now := time.Now()
+
 	tests := []struct {
 		name    string
 		args    []string
@@ -18,9 +20,11 @@ func TestTs(t *testing.T) {
 		want    string
 		wantErr require.ErrorAssertionFunc
 	}{
-		{"no format", nil, "test\n", time.Now().Format(time.DateTime) + " test\n", require.NoError},
-		{"format stamp", []string{"%b %e %H:%M:%S"}, "test\n", time.Now().Format(time.Stamp) + " test\n", require.NoError},
+		{"no format", []string{}, "test\n", now.Format(time.DateTime) + " test\n", require.NoError},
+		{"format stamp", []string{"%b %e %H:%M:%S"}, "test\n", now.Format(time.Stamp) + " test\n", require.NoError},
 		{"invalid format", []string{"%g"}, "test\n", "", require.Error},
+		{"relative", []string{"-r"}, "INFO " + now.Add(-1*time.Hour).Format(time.RFC3339) + " abc", "INFO 1h0m\\ds ago abc\n", require.NoError},
+		{"relative format", []string{"-r", "%a %b %e %T %Y"}, "INFO " + now.Add(-1*time.Hour).Format(time.RFC3339) + " abc", "INFO " + now.Add(-1*time.Hour).Format(time.ANSIC) + " abc\n", require.NoError},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -30,7 +34,7 @@ func TestTs(t *testing.T) {
 			var stdout strings.Builder
 			cmd.SetOut(&stdout)
 			tt.wantErr(t, cmd.Execute())
-			assert.Equal(t, tt.want, stdout.String())
+			assert.Regexp(t, tt.want, stdout.String())
 		})
 	}
 }

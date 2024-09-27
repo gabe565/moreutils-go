@@ -11,6 +11,7 @@ ts [format] [flags]
 ```
   -h, --help          help for ts
   -i, --increment     Timestamps will be the time elapsed since the last log
+  -r, --relative      Convert existing timestamps from stdin to relative times
   -s, --since-start   Timestamps will be the time elapsed since start of the program
   -v, --version       version for ts
 ```

@@ -3,11 +3,13 @@ package ts
 import (
 	"bufio"
 	"fmt"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/util"
+	"github.com/gravwell/gravwell/v3/timegrinder"
 	"github.com/lestrrat-go/strftime"
 	"github.com/spf13/cobra"
 )
@@ -17,6 +19,7 @@ const (
 	FlagMonotonic  = "monotonic"
 	FlagIncrement  = "increment"
 	FlagSinceStart = "since-start"
+	FlagRelative   = "relative"
 )
 
 func New(opts ...cmdutil.Option) *cobra.Command {
@@ -33,6 +36,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd.Flags().BoolP(FlagMonotonic, "m", false, "Use the system's monotonic clock")
 	cmd.Flags().BoolP(FlagIncrement, "i", false, "Timestamps will be the time elapsed since the last log")
 	cmd.Flags().BoolP(FlagSinceStart, "s", false, "Timestamps will be the time elapsed since start of the program")
+	cmd.Flags().BoolP(FlagRelative, "r", false, "Convert existing timestamps from stdin to relative times")
 	if err := cmd.Flags().MarkHidden(FlagMonotonic); err != nil {
 		panic(err)
 	}
@@ -79,6 +83,7 @@ func run(cmd *cobra.Command, args []string) error {
 
 	increment := util.Must2(cmd.Flags().GetBool(FlagIncrement))
 	sinceStart := util.Must2(cmd.Flags().GetBool(FlagSinceStart))
+	relative := util.Must2(cmd.Flags().GetBool(FlagRelative))
 
 	format := "%Y-%m-%d %H:%M:%S"
 	switch {
@@ -94,18 +99,39 @@ func run(cmd *cobra.Command, args []string) error {
 
 	start := time.Now()
 	scanner := bufio.NewScanner(cmd.InOrStdin())
-	for scanner.Scan() {
-		ts := time.Now()
-		if increment || sinceStart {
-			ts = time.Unix(0, 0).UTC().Add(time.Since(start))
-			if increment {
-				start = time.Now()
-			}
+	if relative {
+		tg, err := timegrinder.New(timegrinder.Config{})
+		if err != nil {
+			return err
 		}
-		_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n",
-			formatter.FormatString(ts),
-			scanner.Bytes(),
-		)
+		for scanner.Scan() {
+			line := scanner.Bytes()
+			if ts, _, start, end, ok := tg.DebugMatch(line); ok {
+				var replacement string
+				if len(args) == 0 {
+					replacement = time.Since(ts).Round(time.Second).String() + " ago"
+				} else {
+					replacement = formatter.FormatString(ts)
+				}
+				line = slices.Concat(line[:start], []byte(replacement), line[end:])
+			}
+			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s\n", line)
+		}
+	} else {
+		for scanner.Scan() {
+			ts := time.Now()
+			if increment || sinceStart {
+				ts = time.Unix(0, 0).UTC().Add(time.Since(start))
+				if increment {
+					start = time.Now()
+				}
+			}
+
+			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n",
+				formatter.FormatString(ts),
+				scanner.Bytes(),
+			)
+		}
 	}
 	return scanner.Err()
 }

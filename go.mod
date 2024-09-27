@@ -4,6 +4,7 @@ go 1.23.1
 
 require (
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
+	github.com/gravwell/gravwell/v3 v3.8.40
 	github.com/lestrrat-go/strftime v1.1.0
 	github.com/mattn/go-isatty v0.0.20
 	github.com/mattn/go-tty v0.0.7
