@@ -20,6 +20,7 @@ const (
 	FlagIncrement  = "increment"
 	FlagSinceStart = "since-start"
 	FlagRelative   = "relative"
+	FlagLocal      = "local"
 )
 
 func New(opts ...cmdutil.Option) *cobra.Command {
@@ -37,6 +38,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd.Flags().BoolP(FlagIncrement, "i", false, "Timestamps will be the time elapsed since the last log")
 	cmd.Flags().BoolP(FlagSinceStart, "s", false, "Timestamps will be the time elapsed since start of the program")
 	cmd.Flags().BoolP(FlagRelative, "r", false, "Convert existing timestamps from stdin to relative times")
+	cmd.Flags().BoolP(FlagLocal, "l", false, "Parse to relative using local timezone instead of UTC")
 	if err := cmd.Flags().MarkHidden(FlagMonotonic); err != nil {
 		panic(err)
 	}
@@ -87,6 +89,7 @@ func run(cmd *cobra.Command, args []string) error {
 	increment := util.Must2(cmd.Flags().GetBool(FlagIncrement))
 	sinceStart := util.Must2(cmd.Flags().GetBool(FlagSinceStart))
 	relative := util.Must2(cmd.Flags().GetBool(FlagRelative))
+	parseLocal := util.Must2(cmd.Flags().GetBool(FlagLocal))
 
 	format := "%Y-%m-%d %H:%M:%S"
 	switch {
@@ -106,6 +109,9 @@ func run(cmd *cobra.Command, args []string) error {
 		tg, err := timegrinder.New(timegrinder.Config{})
 		if err != nil {
 			return err
+		}
+		if parseLocal {
+			tg.SetLocalTime()
 		}
 		for scanner.Scan() {
 			line := scanner.Bytes()
