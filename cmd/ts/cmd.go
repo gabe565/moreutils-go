@@ -117,10 +117,12 @@ func run(cmd *cobra.Command, args []string) error {
 			line := scanner.Bytes()
 			if ts, _, start, end, ok := tg.DebugMatch(line); ok {
 				var replacement string
-				if len(args) == 0 {
-					replacement = time.Since(ts).Round(time.Second).String() + " ago"
-				} else {
+				if len(args) != 0 {
 					replacement = formatter.FormatString(ts)
+				} else if since := time.Since(ts).Round(time.Second); since < 0 {
+					replacement = "in " + since.Abs().String()
+				} else {
+					replacement = since.String() + " ago"
 				}
 				line = slices.Concat(line[:start], []byte(replacement), line[end:])
 			}
