@@ -12,6 +12,7 @@ ts [format] [flags]
   -h, --help          help for ts
   -i, --increment     Timestamps will be the time elapsed since the last log
   -l, --local         Parse to relative using local timezone instead of UTC
+      --multiple      Search lines for multiple timestamps when converting to relative. This is slower than the default behavior.
   -r, --relative      Convert existing timestamps from stdin to relative times
   -s, --since-start   Timestamps will be the time elapsed since start of the program
   -v, --version       version for ts

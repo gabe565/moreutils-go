@@ -21,6 +21,7 @@ const (
 	FlagSinceStart = "since-start"
 	FlagRelative   = "relative"
 	FlagLocal      = "local"
+	FlagMultiple   = "multiple"
 )
 
 func New(opts ...cmdutil.Option) *cobra.Command {
@@ -39,6 +40,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd.Flags().BoolP(FlagSinceStart, "s", false, "Timestamps will be the time elapsed since start of the program")
 	cmd.Flags().BoolP(FlagRelative, "r", false, "Convert existing timestamps from stdin to relative times")
 	cmd.Flags().BoolP(FlagLocal, "l", false, "Parse to relative using local timezone instead of UTC")
+	cmd.Flags().Bool(FlagMultiple, false, "Search lines for multiple timestamps when converting to relative. This is slower than the default behavior.")
 	if err := cmd.Flags().MarkHidden(FlagMonotonic); err != nil {
 		panic(err)
 	}
@@ -90,6 +92,7 @@ func run(cmd *cobra.Command, args []string) error {
 	sinceStart := util.Must2(cmd.Flags().GetBool(FlagSinceStart))
 	relative := util.Must2(cmd.Flags().GetBool(FlagRelative))
 	parseLocal := util.Must2(cmd.Flags().GetBool(FlagLocal))
+	multiple := util.Must2(cmd.Flags().GetBool(FlagMultiple))
 
 	format := "%Y-%m-%d %H:%M:%S"
 	switch {
@@ -115,7 +118,12 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 		for scanner.Scan() {
 			line := scanner.Bytes()
-			if ts, _, start, end, ok := tg.DebugMatch(line); ok {
+			for offset := 0; offset < len(line); {
+				ts, _, start, end, ok := tg.DebugMatch(line[offset:])
+				if !ok {
+					break
+				}
+
 				var replacement string
 				if len(args) != 0 {
 					replacement = formatter.FormatString(ts)
@@ -124,7 +132,13 @@ func run(cmd *cobra.Command, args []string) error {
 				} else {
 					replacement = since.String() + " ago"
 				}
-				line = slices.Concat(line[:start], []byte(replacement), line[end:])
+
+				line = slices.Concat(line[:start+offset], []byte(replacement), line[end+offset:])
+				if !multiple {
+					break
+				}
+
+				offset += len(replacement)
 			}
 			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s\n", line)
 		}
