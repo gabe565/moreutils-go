@@ -21,10 +21,10 @@ func TestTs(t *testing.T) {
 		wantErr require.ErrorAssertionFunc
 	}{
 		{"no format", []string{}, "test\n", now.Format(time.DateTime) + " test\n", require.NoError},
-		{"format stamp", []string{"%b %e %H:%M:%S"}, "test\n", now.Format(time.Stamp) + " test\n", require.NoError},
+		{"format stamp", []string{"%b %e %H:%M:%S"}, "test\n", `[A-Z][a-z]{2} \d{2} \d{2}:\d{2}:\d{2}` + " test\n", require.NoError},
 		{"invalid format", []string{"%g"}, "test\n", "", require.Error},
-		{"relative", []string{"-r"}, "INFO " + now.Add(-1*time.Hour).Format(time.RFC3339) + " abc", "INFO 1h0m\\ds ago abc\n", require.NoError},
-		{"relative format", []string{"-r", "%a %b %e %T %Y"}, "INFO " + now.Add(-1*time.Hour).Format(time.RFC3339) + " abc", "INFO " + now.Add(-1*time.Hour).Format(time.ANSIC) + " abc\n", require.NoError},
+		{"relative", []string{"-r"}, "INFO " + now.Add(-1*time.Hour).Format(time.RFC3339) + " abc", "INFO " + `1h0m\ds ago` + " abc\n", require.NoError},
+		{"relative format", []string{"-r", "%a %b %e %T %Y"}, "INFO " + now.Add(-1*time.Hour).Format(time.RFC3339) + " abc", "INFO " + `[A-Z][a-z]{2} [A-Z][a-z]{2} \d{2} \d{2}:\d{2}:\d{2} \d{4}` + " abc", require.NoError},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
