@@ -1,5 +1,5 @@
-name: Moreutils Go
-description: A collection of the Unix tools that nobody thought to write long ago when Unix was young.
+name: Moreutils (Go)
+description: "Go rewrite of moreutils: A collection of the Unix tools that nobody thought to write long ago when Unix was young."
 branding:
   icon: terminal
   color: orange
