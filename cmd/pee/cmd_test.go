@@ -1,12 +1,25 @@
 package pee
 
 import (
+	"io"
 	"strings"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+type lockedWriter struct {
+	w  io.Writer
+	mu sync.Mutex
+}
+
+func (l *lockedWriter) Write(p []byte) (int, error) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	return l.w.Write(p)
+}
 
 func TestPee(t *testing.T) {
 	tests := []struct {
@@ -30,7 +43,7 @@ func TestPee(t *testing.T) {
 			cmd.SetArgs(tt.args)
 			cmd.SetIn(strings.NewReader(tt.stdin))
 			var stdout strings.Builder
-			cmd.SetOut(&stdout)
+			cmd.SetOut(&lockedWriter{w: &stdout})
 			tt.wantErr(t, cmd.Execute())
 			assert.Equal(t, tt.want, stdout.String())
 		})
