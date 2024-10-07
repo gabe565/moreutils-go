@@ -36,7 +36,12 @@ func usageFunc(cmd *cobra.Command) error {
 	}
 	endIdx += flagsIdx
 
-	tmpl = tmpl[:flagsIdx] + Usage + tmpl[endIdx:]
+	newUsage := Usage
+	if f := cmd.Flags().Lookup("version"); f != nil {
+		newUsage += "\n  -" + f.Shorthand + "    " + f.Usage
+	}
+
+	tmpl = tmpl[:flagsIdx] + newUsage + tmpl[endIdx:]
 	cmd.SetUsageTemplate(tmpl)
 	cmd.SetUsageFunc(nil)
 	return cmd.Usage()
