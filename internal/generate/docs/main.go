@@ -7,8 +7,10 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/gabe565/moreutils/cmd"
+	"github.com/gabe565/moreutils/cmd/ifdata"
 	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
 	"github.com/gabe565/moreutils/internal/generate/seealsoreplacer"
@@ -62,6 +64,13 @@ func main() {
 			w = seealsoreplacer.New(w, "### SEE ALSO\n", subcommands.All())
 		}
 
+		if subCmd.Name() == ifdata.Name {
+			w = optionsReplacer{
+				w:       w,
+				replace: ifdata.Usage + ifdata.UsageStatistics + "\n  -v     version for " + ifdata.Name,
+			}
+		}
+
 		if err := doc.GenMarkdown(subCmd, w); err != nil {
 			panic(err)
 		}
@@ -108,4 +117,33 @@ func main() {
 	if err := os.WriteFile("README.md", readmeContents, 0o644); err != nil {
 		panic(err)
 	}
+}
+
+type optionsReplacer struct {
+	w       io.Writer
+	replace string
+}
+
+func (o optionsReplacer) Write(p []byte) (int, error) {
+	if !strings.HasSuffix(o.replace, "\n") {
+		o.replace += "\n"
+	}
+
+	const header, footer = "\n### Options\n\n```", "```"
+	if bytes.Contains(p, []byte(header)) {
+		beforeIdx := bytes.Index(p, []byte(header))
+		if beforeIdx == -1 {
+			panic("missing header: " + header)
+		}
+
+		afterIdx := bytes.Index(p[beforeIdx+len(header):], []byte(footer))
+		if afterIdx == -1 {
+			panic("missing footer: " + footer)
+		}
+		afterIdx += beforeIdx + len(header)
+
+		_, err := o.w.Write(slices.Concat(p[:beforeIdx], []byte(header), []byte(o.replace), p[afterIdx:]))
+		return len(p), err
+	}
+	return o.w.Write(p)
 }

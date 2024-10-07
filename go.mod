@@ -10,6 +10,7 @@ require (
 	github.com/lestrrat-go/strftime v1.1.0
 	github.com/mattn/go-isatty v0.0.20
 	github.com/mattn/go-tty v0.0.7
+	github.com/prometheus/procfs v0.15.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.9.0

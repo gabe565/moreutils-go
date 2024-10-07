@@ -3,60 +3,60 @@ package ifdata
 import (
 	"errors"
 	"fmt"
+	"html/template"
 	"net"
 	"strings"
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
-	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra"
 )
 
 const (
 	Name                 = "ifdata"
-	FlagPrint            = "print"
-	FlagExists           = "exists"
-	FlagAddress          = "address"
-	FlagNetmask          = "netmask"
-	FlagNetworkAddress   = "network-address"
-	FlagBroadcastAddress = "broadcast-address"
-	FlagMTU              = "mtu"
-	FlagFlags            = "flags"
-	FlagHardwareAddress  = "hardware-addr"
+	FlagExists           = "e"
+	FlagPrint            = "p"
+	FlagPrintExists      = "pe"
+	FlagAddress          = "pa"
+	FlagNetmask          = "pn"
+	FlagNetworkAddress   = "pN"
+	FlagBroadcastAddress = "pb"
+	FlagMTU              = "pm"
+	FlagFlags            = "pf"
+	FlagHardwareAddress  = "ph"
+
+	FlagInputStatistics  = "si"
+	FlagInputPackets     = "sip"
+	FlagInputBytes       = "sib"
+	FlagInputErrors      = "sie"
+	FlagInputDropped     = "sid"
+	FlagInputFIFO        = "sif"
+	FlagInputCompressed  = "sic"
+	FlagInputMulticast   = "sim"
+	FlagInputBytesSecond = "bips"
+
+	FlagOutputStatistics    = "so"
+	FlagOutputPackets       = "sop"
+	FlagOutputBytes         = "sob"
+	FlagOutputErrors        = "soe"
+	FlagOutputDropped       = "sod"
+	FlagOutputFIFO          = "sof"
+	FlagOutputCollisions    = "sox"
+	FlagOutputCarrierLosses = "soc"
+	FlagOutputMulticast     = "som"
+	FlagOutputBytesSecond   = "bops"
 )
 
 func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     Name + " interface",
+		Use:     Name + " [flags] interface",
 		Short:   "Get network interface info without parsing ifconfig output",
 		RunE:    run,
 		GroupID: cmdutil.Applet,
 	}
 
 	cmd.SetUsageFunc(usageFunc)
-
-	cmd.Flags().Bool("help", false, "Print usage")
-	cmd.Flags().Lookup("help").Hidden = true
-
-	cmd.Flags().BoolP(FlagPrint, "p", false, "Prints out the whole configuration of the interface")
-	cmd.Flags().BoolP(FlagExists, "e", false, "Test to see if the interface exists, exit nonzero if it does not")
-	cmd.Flags().BoolP(FlagAddress, "a", false, "Prints the IPv4 address of the interface")
-	cmd.Flags().BoolP(FlagNetmask, "n", false, "Prints the netmask of the interface")
-	cmd.Flags().BoolP(FlagNetworkAddress, "N", false, "Prints the network address of the interface")
-	cmd.Flags().BoolP(FlagBroadcastAddress, "b", false, "Prints the broadcast address of the interface")
-	cmd.Flags().BoolP(FlagMTU, "m", false, "Prints the MTU of the interface")
-	cmd.Flags().BoolP(FlagFlags, "f", false, "Prints the flags of the interface")
-	cmd.Flags().BoolP(FlagHardwareAddress, "h", false, "Prints the hardware address of the interface. Exit with a failure exit code if there is not hardware address for the given network interface")
-
-	cmd.MarkFlagsMutuallyExclusive(
-		FlagExists,
-		FlagAddress,
-		FlagNetmask,
-		FlagNetworkAddress,
-		FlagBroadcastAddress,
-		FlagMTU,
-		FlagFlags,
-		FlagHardwareAddress,
-	)
+	cmd.DisableFlagsInUseLine = true
+	cmd.DisableFlagParsing = true
 
 	for _, opt := range opts {
 		opt(cmd)
@@ -64,31 +64,51 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	return cmd
 }
 
-var ErrNoOperation = errors.New("no operation was provided")
+var (
+	ErrNoFormatter           = errors.New("no formatter was provided")
+	ErrUnknownFormatter      = errors.New("unknown formatter")
+	ErrNoInterface           = errors.New("no interface was provided")
+	ErrInterfaceMissing      = errors.New("interface missing from /proc/net/dev")
+	ErrStatisticsUnsupported = errors.New("platform does not support interface statistics")
+)
 
 func run(cmd *cobra.Command, args []string) error {
-	printFlag := util.Must2(cmd.Flags().GetBool(FlagPrint))
-	exists := util.Must2(cmd.Flags().GetBool(FlagExists))
-	address := util.Must2(cmd.Flags().GetBool(FlagAddress))
-	netmask := util.Must2(cmd.Flags().GetBool(FlagNetmask))
-	networkAddress := util.Must2(cmd.Flags().GetBool(FlagNetworkAddress))
-	broadcastAddress := util.Must2(cmd.Flags().GetBool(FlagBroadcastAddress))
-	mtu := util.Must2(cmd.Flags().GetBool(FlagMTU))
-	flags := util.Must2(cmd.Flags().GetBool(FlagFlags))
-	hardwareAddress := util.Must2(cmd.Flags().GetBool(FlagHardwareAddress))
-
 	if len(args) == 0 {
-		// Error is suppressed when "-h" is provided with no flags
-		if hardwareAddress {
+		return cmd.Usage()
+	}
+
+	var op, name string
+	for _, arg := range args {
+		switch {
+		case arg == "-h", arg == "--help":
 			return cmd.Usage()
+		case arg == "-v", arg == "--version":
+			if cmd.Version != "" {
+				tmpl, err := template.New("").Parse(cmd.VersionTemplate())
+				if err != nil {
+					panic(err)
+				}
+
+				return tmpl.Execute(cmd.OutOrStdout(), cmd)
+			}
+		case strings.HasPrefix(arg, "-"):
+			op = strings.TrimPrefix(arg, "-")
+		default:
+			name = arg
 		}
-		return cobra.ExactArgs(1)(cmd, args)
+	}
+
+	switch {
+	case op == "":
+		return ErrNoFormatter
+	case name == "":
+		return ErrNoInterface
 	}
 	cmd.SilenceUsage = true
 
-	iface, err := net.InterfaceByName(args[0])
+	iface, err := net.InterfaceByName(name)
 
-	if printFlag && exists {
+	if op == FlagPrintExists {
 		if err != nil {
 			_, _ = fmt.Fprintln(cmd.OutOrStdout(), "no")
 		} else {
@@ -98,23 +118,23 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	if err != nil {
-		return fmt.Errorf("%w: %s", err, args[0])
+		return fmt.Errorf("%w: %s", err, name)
 	}
 
-	if exists {
+	if op == FlagExists {
 		return nil
 	}
 
-	switch {
-	case mtu:
+	switch op {
+	case FlagMTU:
 		_, _ = fmt.Fprintln(cmd.OutOrStdout(), iface.MTU)
-	case flags:
+	case FlagFlags:
 		for _, flag := range strings.Split(iface.Flags.String(), "|") {
 			_, _ = fmt.Fprintln(cmd.OutOrStdout(), flag)
 		}
-	case hardwareAddress:
+	case FlagHardwareAddress:
 		_, _ = fmt.Fprintln(cmd.OutOrStdout(), strings.ToUpper(iface.HardwareAddr.String()))
-	case address, netmask, networkAddress, broadcastAddress, printFlag:
+	case FlagAddress, FlagNetmask, FlagNetworkAddress, FlagBroadcastAddress, FlagPrint:
 		addrs, err := iface.Addrs()
 		if err != nil {
 			return err
@@ -122,16 +142,16 @@ func run(cmd *cobra.Command, args []string) error {
 
 		for _, addr := range addrs {
 			if addr, ok := addr.(*net.IPNet); ok && addr.IP.To4() != nil {
-				switch {
-				case address:
+				switch op {
+				case FlagAddress:
 					_, _ = fmt.Fprintln(cmd.OutOrStdout(), addr.IP)
-				case netmask:
+				case FlagNetmask:
 					_, _ = fmt.Fprintln(cmd.OutOrStdout(), net.IP(addr.Mask))
-				case networkAddress:
+				case FlagNetworkAddress:
 					_, _ = fmt.Fprintln(cmd.OutOrStdout(), addr.IP.Mask(addr.Mask))
-				case broadcastAddress:
+				case FlagBroadcastAddress:
 					_, _ = fmt.Fprintln(cmd.OutOrStdout(), getBroadcastAddr(addr))
-				case printFlag:
+				case FlagPrint:
 					_, _ = fmt.Fprintf(cmd.OutOrStdout(),
 						"%s %s %s %d\n",
 						addr.IP,
@@ -143,8 +163,12 @@ func run(cmd *cobra.Command, args []string) error {
 			}
 		}
 	default:
+		if statisticsSupported {
+			return statistics(cmd, op, iface)
+		}
+
 		cmd.SilenceUsage = false
-		return ErrNoOperation
+		return fmt.Errorf("%w: -%s", ErrUnknownFormatter, op)
 	}
 
 	return nil
