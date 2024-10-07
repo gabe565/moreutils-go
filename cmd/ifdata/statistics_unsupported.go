@@ -10,6 +10,6 @@ import (
 
 const statisticsSupported = false
 
-func statistics(_ *cobra.Command, _ string, _ *net.Interface) error {
+func statistics(_ *cobra.Command, _ formatter, _ *net.Interface) error {
 	return ErrStatisticsUnsupported
 }

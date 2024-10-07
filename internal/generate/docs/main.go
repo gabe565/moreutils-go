@@ -67,7 +67,7 @@ func main() {
 		if subCmd.Name() == ifdata.Name {
 			w = optionsReplacer{
 				w:       w,
-				replace: ifdata.Usage + ifdata.UsageStatistics + "\n  -v     version for " + ifdata.Name,
+				replace: ifdata.UsageString(subCmd, true),
 			}
 		}
 

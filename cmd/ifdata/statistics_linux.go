@@ -12,11 +12,11 @@ import (
 
 const statisticsSupported = true
 
-func statistics(cmd *cobra.Command, op string, iface *net.Interface) error {
+func statistics(cmd *cobra.Command, op formatter, iface *net.Interface) error {
 	handle := statsHandler(op)
 	if handle == nil {
 		cmd.SilenceUsage = false
-		return fmt.Errorf("%w: -%s", ErrUnknownFormatter, op)
+		return fmt.Errorf("%w: %s", ErrUnknownFormatter, op)
 	}
 
 	device, err := getNetDevLine(iface.Name)
@@ -48,9 +48,9 @@ func getNetDevLine(name string) (*procfs.NetDevLine, error) {
 	return nil, fmt.Errorf("%w: %s", ErrInterfaceMissing, name)
 }
 
-func statsHandler(op string) func(w io.Writer, d *procfs.NetDevLine) (int, error) {
+func statsHandler(op formatter) func(w io.Writer, d *procfs.NetDevLine) (int, error) {
 	switch op {
-	case FlagInputStatistics:
+	case fmtInputStatistics:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) {
 			return fmt.Fprintf(w, "%d %d %d %d %d %d %d %d\n",
 				d.RxBytes, d.RxPackets,
@@ -59,21 +59,21 @@ func statsHandler(op string) func(w io.Writer, d *procfs.NetDevLine) (int, error
 				d.RxCompressed, d.RxMulticast,
 			)
 		}
-	case FlagInputPackets:
+	case fmtInputPackets:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxPackets) }
-	case FlagInputBytes:
+	case fmtInputBytes:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxBytes) }
-	case FlagInputErrors:
+	case fmtInputErrors:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxErrors) }
-	case FlagInputDropped:
+	case fmtInputDropped:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxDropped) }
-	case FlagInputFIFO:
+	case fmtInputFIFO:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxFIFO) }
-	case FlagInputCompressed:
+	case fmtInputCompressed:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxCompressed) }
-	case FlagInputMulticast:
+	case fmtInputMulticast:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxMulticast) }
-	case FlagInputBytesSecond:
+	case fmtInputBytesSecond:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) {
 			time.Sleep(time.Second)
 
@@ -85,7 +85,7 @@ func statsHandler(op string) func(w io.Writer, d *procfs.NetDevLine) (int, error
 			return fmt.Fprintln(w, d2.RxBytes-d.RxBytes)
 		}
 
-	case FlagOutputStatistics:
+	case fmtOutputStatistics:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) {
 			return fmt.Fprintf(w, "%d %d %d %d %d %d %d %d\n",
 				d.TxBytes, d.TxPackets,
@@ -94,23 +94,23 @@ func statsHandler(op string) func(w io.Writer, d *procfs.NetDevLine) (int, error
 				d.TxCarrier, 0,
 			)
 		}
-	case FlagOutputPackets:
+	case fmtOutputPackets:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxPackets) }
-	case FlagOutputBytes:
+	case fmtOutputBytes:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxBytes) }
-	case FlagOutputErrors:
+	case fmtOutputErrors:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxErrors) }
-	case FlagOutputDropped:
+	case fmtOutputDropped:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxDropped) }
-	case FlagOutputFIFO:
+	case fmtOutputFIFO:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxFIFO) }
-	case FlagOutputCollisions:
+	case fmtOutputCollisions:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxCollisions) }
-	case FlagOutputCarrierLosses:
+	case fmtOutputCarrierLosses:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxCarrier) }
-	case FlagOutputMulticast:
+	case fmtOutputMulticast:
 		return func(w io.Writer, _ *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, 0) }
-	case FlagOutputBytesSecond:
+	case fmtOutputBytesSecond:
 		return func(w io.Writer, d *procfs.NetDevLine) (int, error) {
 			time.Sleep(time.Second)
 

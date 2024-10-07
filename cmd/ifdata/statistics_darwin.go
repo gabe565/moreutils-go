@@ -14,11 +14,11 @@ import (
 
 const statisticsSupported = true
 
-func statistics(cmd *cobra.Command, op string, iface *net.Interface) error {
+func statistics(cmd *cobra.Command, op formatter, iface *net.Interface) error {
 	handle := statsHandler(op)
 	if handle == nil {
 		cmd.SilenceUsage = false
-		return fmt.Errorf("%w: -%s", ErrUnknownFormatter, op)
+		return fmt.Errorf("%w: %s", ErrUnknownFormatter, op)
 	}
 
 	data, err := getIfaceData(iface.Index)
@@ -30,9 +30,9 @@ func statistics(cmd *cobra.Command, op string, iface *net.Interface) error {
 	return err
 }
 
-func statsHandler(op string) func(w io.Writer, d *ifMsghdr2) (int, error) {
+func statsHandler(op formatter) func(w io.Writer, d *ifMsghdr2) (int, error) {
 	switch op {
-	case FlagInputStatistics:
+	case fmtInputStatistics:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) {
 			return fmt.Fprintf(w, "%d %d %d %d %d %d %d %d\n",
 				d.Data.Ibytes, d.Data.Ipackets,
@@ -41,19 +41,19 @@ func statsHandler(op string) func(w io.Writer, d *ifMsghdr2) (int, error) {
 				0, d.Data.Imcasts,
 			)
 		}
-	case FlagInputPackets:
+	case fmtInputPackets:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Ipackets) }
-	case FlagInputBytes:
+	case fmtInputBytes:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Ibytes) }
-	case FlagInputErrors:
+	case fmtInputErrors:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Ierrors) }
-	case FlagInputDropped:
+	case fmtInputDropped:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Iqdrops) }
-	case FlagInputMulticast:
+	case fmtInputMulticast:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Imcasts) }
-	case FlagInputFIFO, FlagInputCompressed:
+	case fmtInputFIFO, fmtInputCompressed:
 		return func(w io.Writer, _ *ifMsghdr2) (int, error) { return fmt.Fprintln(w, 0) }
-	case FlagInputBytesSecond:
+	case fmtInputBytesSecond:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) {
 			time.Sleep(time.Second)
 
@@ -65,7 +65,7 @@ func statsHandler(op string) func(w io.Writer, d *ifMsghdr2) (int, error) {
 			return fmt.Fprintln(w, d2.Data.Ibytes-d.Data.Ibytes)
 		}
 
-	case FlagOutputStatistics:
+	case fmtOutputStatistics:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) {
 			return fmt.Fprintf(w, "%d %d %d %d %d %d %d %d\n",
 				d.Data.Obytes, d.Data.Opackets,
@@ -74,19 +74,19 @@ func statsHandler(op string) func(w io.Writer, d *ifMsghdr2) (int, error) {
 				0, d.Data.Omcasts,
 			)
 		}
-	case FlagOutputPackets:
+	case fmtOutputPackets:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Opackets) }
-	case FlagOutputBytes:
+	case fmtOutputBytes:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Obytes) }
-	case FlagOutputErrors:
+	case fmtOutputErrors:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Oerrors) }
-	case FlagOutputCollisions:
+	case fmtOutputCollisions:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Collisions) }
-	case FlagOutputMulticast:
+	case fmtOutputMulticast:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) { return fmt.Fprintln(w, d.Data.Omcasts) }
-	case FlagOutputDropped, FlagOutputFIFO, FlagOutputCarrierLosses:
+	case fmtOutputDropped, fmtOutputFIFO, fmtOutputCarrierLosses:
 		return func(w io.Writer, _ *ifMsghdr2) (int, error) { return fmt.Fprintln(w, 0) }
-	case FlagOutputBytesSecond:
+	case fmtOutputBytesSecond:
 		return func(w io.Writer, d *ifMsghdr2) (int, error) {
 			time.Sleep(time.Second)
 

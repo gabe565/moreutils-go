@@ -11,40 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const (
-	Name                 = "ifdata"
-	FlagExists           = "e"
-	FlagPrint            = "p"
-	FlagPrintExists      = "pe"
-	FlagAddress          = "pa"
-	FlagNetmask          = "pn"
-	FlagNetworkAddress   = "pN"
-	FlagBroadcastAddress = "pb"
-	FlagMTU              = "pm"
-	FlagFlags            = "pf"
-	FlagHardwareAddress  = "ph"
-
-	FlagInputStatistics  = "si"
-	FlagInputPackets     = "sip"
-	FlagInputBytes       = "sib"
-	FlagInputErrors      = "sie"
-	FlagInputDropped     = "sid"
-	FlagInputFIFO        = "sif"
-	FlagInputCompressed  = "sic"
-	FlagInputMulticast   = "sim"
-	FlagInputBytesSecond = "bips"
-
-	FlagOutputStatistics    = "so"
-	FlagOutputPackets       = "sop"
-	FlagOutputBytes         = "sob"
-	FlagOutputErrors        = "soe"
-	FlagOutputDropped       = "sod"
-	FlagOutputFIFO          = "sof"
-	FlagOutputCollisions    = "sox"
-	FlagOutputCarrierLosses = "soc"
-	FlagOutputMulticast     = "som"
-	FlagOutputBytesSecond   = "bops"
-)
+const Name = "ifdata"
 
 func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd := &cobra.Command{
@@ -52,7 +19,11 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		Short:   "Get network interface info without parsing ifconfig output",
 		RunE:    run,
 		GroupID: cmdutil.Applet,
+
+		ValidArgsFunction: validArgs,
 	}
+
+	cmd.InitDefaultHelpFlag()
 
 	cmd.SetUsageFunc(usageFunc)
 	cmd.DisableFlagsInUseLine = true
@@ -62,6 +33,41 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		opt(cmd)
 	}
 	return cmd
+}
+
+func validArgs(_ *cobra.Command, args []string, _ string) ([]string, cobra.ShellCompDirective) {
+	if len(args) == 0 {
+		vals := formatterValues()
+		strs := make([]string, 0, len(vals))
+		for _, val := range vals {
+			if val == fmtNone {
+				continue
+			}
+
+			if val.supported() {
+				strs = append(strs, val.String()+"\t"+val.description())
+			}
+		}
+		return strs, cobra.ShellCompDirectiveNoFileComp
+	}
+
+	ifaces, err := net.Interfaces()
+	if err != nil {
+		return nil, cobra.ShellCompDirectiveError
+	}
+
+	names := make([]string, 0, len(ifaces))
+	for _, iface := range ifaces {
+		addrs, _ := iface.Addrs()
+		desc := make([]string, 0, len(addrs))
+		for _, addr := range addrs {
+			if addr, ok := addr.(*net.IPNet); ok && addr.IP.To4() != nil {
+				desc = append(desc, addr.String())
+			}
+		}
+		names = append(names, iface.Name+"\t"+strings.Join(desc, ","))
+	}
+	return names, cobra.ShellCompDirectiveNoFileComp
 }
 
 var (
@@ -77,7 +83,8 @@ func run(cmd *cobra.Command, args []string) error {
 		return cmd.Usage()
 	}
 
-	var op, name string
+	var op formatter
+	var name string
 	for _, arg := range args {
 		switch {
 		case arg == "-h", arg == "--help":
@@ -92,14 +99,16 @@ func run(cmd *cobra.Command, args []string) error {
 				return tmpl.Execute(cmd.OutOrStdout(), cmd)
 			}
 		case strings.HasPrefix(arg, "-"):
-			op = strings.TrimPrefix(arg, "-")
+			if err := op.UnmarshalText([]byte(arg)); err != nil {
+				return err
+			}
 		default:
 			name = arg
 		}
 	}
 
 	switch {
-	case op == "":
+	case op == fmtNone:
 		return ErrNoFormatter
 	case name == "":
 		return ErrNoInterface
@@ -108,7 +117,7 @@ func run(cmd *cobra.Command, args []string) error {
 
 	iface, err := net.InterfaceByName(name)
 
-	if op == FlagPrintExists {
+	if op == fmtPrintExists {
 		if err != nil {
 			_, _ = fmt.Fprintln(cmd.OutOrStdout(), "no")
 		} else {
@@ -121,20 +130,20 @@ func run(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("%w: %s", err, name)
 	}
 
-	if op == FlagExists {
+	if op == fmtExists {
 		return nil
 	}
 
 	switch op {
-	case FlagMTU:
+	case fmtMTU:
 		_, _ = fmt.Fprintln(cmd.OutOrStdout(), iface.MTU)
-	case FlagFlags:
+	case fmtFlags:
 		for _, flag := range strings.Split(iface.Flags.String(), "|") {
 			_, _ = fmt.Fprintln(cmd.OutOrStdout(), flag)
 		}
-	case FlagHardwareAddress:
+	case fmtHardwareAddress:
 		_, _ = fmt.Fprintln(cmd.OutOrStdout(), strings.ToUpper(iface.HardwareAddr.String()))
-	case FlagAddress, FlagNetmask, FlagNetworkAddress, FlagBroadcastAddress, FlagPrint:
+	case fmtAddress, fmtNetmask, fmtNetworkAddress, fmtBroadcastAddress, fmtPrint:
 		addrs, err := iface.Addrs()
 		if err != nil {
 			return err
@@ -143,15 +152,15 @@ func run(cmd *cobra.Command, args []string) error {
 		for _, addr := range addrs {
 			if addr, ok := addr.(*net.IPNet); ok && addr.IP.To4() != nil {
 				switch op {
-				case FlagAddress:
+				case fmtAddress:
 					_, _ = fmt.Fprintln(cmd.OutOrStdout(), addr.IP)
-				case FlagNetmask:
+				case fmtNetmask:
 					_, _ = fmt.Fprintln(cmd.OutOrStdout(), net.IP(addr.Mask))
-				case FlagNetworkAddress:
+				case fmtNetworkAddress:
 					_, _ = fmt.Fprintln(cmd.OutOrStdout(), addr.IP.Mask(addr.Mask))
-				case FlagBroadcastAddress:
+				case fmtBroadcastAddress:
 					_, _ = fmt.Fprintln(cmd.OutOrStdout(), getBroadcastAddr(addr))
-				case FlagPrint:
+				case fmtPrint:
 					_, _ = fmt.Fprintf(cmd.OutOrStdout(),
 						"%s %s %s %d\n",
 						addr.IP,
@@ -168,7 +177,7 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 
 		cmd.SilenceUsage = false
-		return fmt.Errorf("%w: -%s", ErrUnknownFormatter, op)
+		return fmt.Errorf("%w: %s", ErrUnknownFormatter, op)
 	}
 
 	return nil
