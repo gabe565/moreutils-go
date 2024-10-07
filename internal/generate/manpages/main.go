@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gabe565/moreutils/cmd"
+	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
 	"github.com/gabe565/moreutils/internal/generate/seealsoreplacer"
 	"github.com/gabe565/moreutils/internal/util"
@@ -44,8 +45,9 @@ func main() {
 		panic(err)
 	}
 
-	root := cmd.New(cmd.Name)
-	cmds := append(slices.Collect(subcommands.Without(nil)), root)
+	opts := []cmdutil.Option{cmdutil.WithVersion("beta")}
+	root := cmd.New(cmd.Name, opts...)
+	cmds := append(slices.Collect(subcommands.Without(nil, opts...)), root)
 	for _, subCmd := range root.Commands() {
 		// Add any commands which aren't standalone
 		if !util.CmdsContains(cmds, subCmd) {
