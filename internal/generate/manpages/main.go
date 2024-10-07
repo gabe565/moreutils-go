@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"compress/gzip"
 	"errors"
 	"io"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gabe565/moreutils/cmd"
+	"github.com/gabe565/moreutils/cmd/ifdata"
 	"github.com/gabe565/moreutils/internal/cmdutil"
 	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
 	"github.com/gabe565/moreutils/internal/generate/seealsoreplacer"
@@ -83,6 +85,14 @@ func main() {
 			w = seealsoreplacer.New(w, ".SH SEE ALSO\n", linked)
 		}
 
+		if subCmd.Name() == ifdata.Name {
+			w = optionsInserter{
+				w:      w,
+				find:   "help for " + ifdata.Name + "\n",
+				insert: ifdata.ManOptions(),
+			}
+		}
+
 		if err := doc.GenMan(subCmd, &header, w); err != nil {
 			panic(err)
 		}
@@ -96,4 +106,28 @@ func main() {
 			panic(err)
 		}
 	}
+}
+
+type optionsInserter struct {
+	w      io.Writer
+	find   string
+	insert string
+}
+
+func (o optionsInserter) Write(p []byte) (int, error) {
+	if !strings.HasSuffix(o.insert, "\n") {
+		o.insert += "\n"
+	}
+
+	if bytes.Contains(p, []byte(o.find)) {
+		beforeIdx := bytes.Index(p, []byte(o.find))
+		if beforeIdx == -1 {
+			panic("missing header: " + o.find)
+		}
+		beforeIdx += len(o.find)
+
+		_, err := o.w.Write(slices.Concat(p[:beforeIdx], []byte(o.find), []byte(o.insert), p[beforeIdx:]))
+		return len(p), err
+	}
+	return o.w.Write(p)
 }

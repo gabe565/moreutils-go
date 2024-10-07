@@ -52,3 +52,15 @@ func usageFunc(cmd *cobra.Command) error {
 	cmd.SetUsageFunc(nil)
 	return cmd.Usage()
 }
+
+func ManOptions() string {
+	var s strings.Builder
+	for _, val := range formatterValues() {
+		if val == fmtNone {
+			continue
+		}
+
+		_, _ = fmt.Fprintf(&s, "\n.PP\n\\fB%s\\fP\n\t%s\n", val, val.description())
+	}
+	return s.String()
+}
