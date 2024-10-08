@@ -76,8 +76,12 @@ func checkFile(cmd *cobra.Command, path string) error {
 		for i := 0; i < len(b); {
 			if r, width := utf8.DecodeRune(b[i:]); width != 0 {
 				if r == utf8.RuneError {
-					_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s: line %d, char %d, byte %d\n",
-						path, line, i, offset)
+					if _, err := fmt.Fprintf(cmd.OutOrStdout(),
+						"%s: line %d, char %d, byte %d\n",
+						path, line, i, offset,
+					); err != nil {
+						return err
+					}
 					return fmt.Errorf("%s: %w", path, errNotUTF8)
 				}
 				i += width

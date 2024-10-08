@@ -77,7 +77,9 @@ func main() {
 
 		if subCmd.Name() != cmd.Name && !subCmd.HasParent() {
 			// Add "See Also" section to standalone commands
-			_, _ = io.WriteString(w, "### SEE ALSO\n\n* ["+cmd.Name+"]("+cmd.Name+".md)\t - "+root.Short+"\n\n")
+			if _, err := io.WriteString(w, "### SEE ALSO\n\n* ["+cmd.Name+"]("+cmd.Name+".md)\t - "+root.Short+"\n\n"); err != nil {
+				panic(err)
+			}
 		}
 
 		if err := out.Close(); err != nil {

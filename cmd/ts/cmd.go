@@ -140,7 +140,9 @@ func run(cmd *cobra.Command, args []string) error {
 
 				offset += len(replacement)
 			}
-			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s\n", line)
+			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s\n", line); err != nil {
+				return err
+			}
 		}
 	} else {
 		for scanner.Scan() {
@@ -152,10 +154,12 @@ func run(cmd *cobra.Command, args []string) error {
 				}
 			}
 
-			_, _ = fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n",
+			if _, err := fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n",
 				formatter.FormatString(ts),
 				scanner.Bytes(),
-			)
+			); err != nil {
+				return err
+			}
 		}
 	}
 	return scanner.Err()
