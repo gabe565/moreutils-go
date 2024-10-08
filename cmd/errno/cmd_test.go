@@ -19,9 +19,9 @@ func TestErrno(t *testing.T) {
 		want    string
 		wantErr require.ErrorAssertionFunc
 	}{
-		{"number", []string{"32"}, "EPIPE 32 broken pipe\n", require.NoError},
-		{"name", []string{"EPIPE"}, "EPIPE 32 broken pipe\n", require.NoError},
-		{"search", []string{"-s", "broken"}, "EPIPE 32 broken pipe\n", require.NoError},
+		{"number", []string{"32"}, "EPIPE 32 Broken pipe\n", require.NoError},
+		{"name", []string{"EPIPE"}, "EPIPE 32 Broken pipe\n", require.NoError},
+		{"search", []string{"-s", "broken"}, "EPIPE 32 Broken pipe\n", require.NoError},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

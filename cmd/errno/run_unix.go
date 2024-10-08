@@ -69,6 +69,8 @@ func run(cmd *cobra.Command, args []string) error {
 }
 
 func printErrno(cmd *cobra.Command, e *errno.Errno) error {
-	_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s %d %s\n", e.Name(), uint(e.Errno), e.Error())
+	pretty := e.Error()
+	pretty = strings.ToUpper(pretty[0:1]) + pretty[1:]
+	_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s %d %s\n", e.Name(), uint(e.Errno), pretty)
 	return err
 }
