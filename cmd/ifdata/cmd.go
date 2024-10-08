@@ -99,7 +99,8 @@ func run(cmd *cobra.Command, args []string) error {
 				return tmpl.Execute(cmd.OutOrStdout(), cmd)
 			}
 		case strings.HasPrefix(arg, "-"):
-			if err := op.UnmarshalText([]byte(arg)); err != nil {
+			var err error
+			if op, err = formatterString(arg); err != nil {
 				return err
 			}
 		default:

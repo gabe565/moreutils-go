@@ -51,8 +51,8 @@ func run(cmd *cobra.Command, args []string) error {
 		return ErrBothFilesStdin
 	}
 
-	var op operator
-	if err := op.UnmarshalText([]byte(args[1])); err != nil {
+	op, err := operatorString(args[1])
+	if err != nil {
 		return err
 	}
 

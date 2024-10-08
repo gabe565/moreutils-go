@@ -8,7 +8,7 @@ import (
 	"github.com/gabe565/moreutils/internal/util"
 )
 
-//go:generate enumer -type operator -trimprefix operator -transform lower -text -output operator_string.go
+//go:generate enumer -type operator -trimprefix operator -transform lower -output operator_string.go
 
 type operator uint8
 
