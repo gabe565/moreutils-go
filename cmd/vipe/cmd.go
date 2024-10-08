@@ -36,9 +36,6 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 }
 
 func run(cmd *cobra.Command, _ []string) error {
-	if util.IsTerminal(cmd.InOrStdin()) {
-		return util.ErrNotAPipe
-	}
 	cmd.SilenceUsage = true
 
 	suffix := util.Must2(cmd.Flags().GetString(FlagSuffix))
@@ -55,8 +52,10 @@ func run(cmd *cobra.Command, _ []string) error {
 		_ = os.Remove(tmp.Name())
 	}()
 
-	if _, err := io.Copy(tmp, cmd.InOrStdin()); err != nil {
-		return err
+	if !util.IsTerminal(cmd.InOrStdin()) {
+		if _, err := io.Copy(tmp, cmd.InOrStdin()); err != nil {
+			return err
+		}
 	}
 
 	if err := tmp.Close(); err != nil {
