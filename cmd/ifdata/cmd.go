@@ -80,7 +80,7 @@ var (
 
 func run(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-		return cmd.Usage()
+		return cmd.Help()
 	}
 
 	var op formatter
@@ -88,7 +88,7 @@ func run(cmd *cobra.Command, args []string) error {
 	for _, arg := range args {
 		switch {
 		case arg == "-h", arg == "--help":
-			return cmd.Usage()
+			return cmd.Help()
 		case arg == "-v", arg == "--version":
 			if cmd.Version != "" {
 				tmpl, err := template.New("").Parse(cmd.VersionTemplate())
