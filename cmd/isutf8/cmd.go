@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"unicode/utf8"
 
@@ -67,27 +68,32 @@ func checkFile(cmd *cobra.Command, path string) error {
 		_ = f.Close()
 	}()
 
-	scanner := bufio.NewScanner(f)
-	var line, offset int64
-	for scanner.Scan() {
-		line++
-		b := scanner.Bytes()
-
-		for i := 0; i < len(b); {
-			if r, width := utf8.DecodeRune(b[i:]); width != 0 {
-				if r == utf8.RuneError {
-					if _, err := fmt.Fprintf(cmd.OutOrStdout(),
-						"%s: line %d, char %d, byte %d\n",
-						path, line, i, offset,
-					); err != nil {
-						return err
-					}
-					return fmt.Errorf("%s: %w", path, errNotUTF8)
-				}
-				i += width
-				offset++
+	buf := bufio.NewReader(f)
+	line := int64(1)
+	var i, offset int64
+	for {
+		r, size, err := buf.ReadRune()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				return nil
 			}
+			return err
 		}
+
+		switch r {
+		case '\n':
+			line++
+		case utf8.RuneError:
+			if _, err := fmt.Fprintf(cmd.OutOrStdout(),
+				"%s: line %d, char %d, byte %d\n",
+				path, line, i, offset,
+			); err != nil {
+				return err
+			}
+			return fmt.Errorf("%s: %w", path, errNotUTF8)
+		}
+
+		i += int64(size)
+		offset++
 	}
-	return scanner.Err()
 }
