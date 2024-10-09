@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -45,10 +46,11 @@ func TestIsUTF8(t *testing.T) {
 	require.NoError(t, gzw.Close())
 
 	tests := []struct {
-		name    string
-		args    []string
-		stdin   io.Reader
-		wantErr require.ErrorAssertionFunc
+		name       string
+		args       []string
+		stdin      io.Reader
+		wantStdout string
+		wantErr    require.ErrorAssertionFunc
 	}{
 		{
 			"all plain",
@@ -57,6 +59,7 @@ func TestIsUTF8(t *testing.T) {
 				tempFile(t, false, "def"),
 			},
 			nil,
+			"",
 			require.NoError,
 		},
 		{
@@ -66,24 +69,31 @@ func TestIsUTF8(t *testing.T) {
 				tempFile(t, true, "def"),
 			},
 			nil,
+			`.+\/isutf8-test-\d+\.txt\.gz: line 1, char 1, byte 1
+.+\/isutf8-test-\d+\.txt\.gz: line 1, char 1, byte 1
+`,
 			require.Error,
 		},
 		{
 			"not latin",
 			[]string{tempFile(t, false, "世界")},
 			nil,
+			"",
 			require.NoError,
 		},
 		{
 			"stdin plain",
 			nil,
 			strings.NewReader("abc"),
+			"",
 			require.NoError,
 		},
 		{
 			"stdin compressed",
 			nil,
 			strings.NewReader(bad.String()),
+			`\(standard input\): line 1, char 1, byte 1
+`,
 			require.Error,
 		},
 	}
@@ -97,6 +107,7 @@ func TestIsUTF8(t *testing.T) {
 			var stdout strings.Builder
 			cmd.SetOut(&stdout)
 			tt.wantErr(t, cmd.Execute())
+			assert.Regexp(t, "^"+tt.wantStdout+"$", stdout.String())
 		})
 	}
 }
