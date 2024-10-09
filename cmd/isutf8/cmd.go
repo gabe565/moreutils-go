@@ -82,6 +82,7 @@ func checkFile(cmd *cobra.Command, path string) error {
 
 		switch r {
 		case '\n':
+			i = 0
 			line++
 		case utf8.RuneError:
 			if _, err := fmt.Fprintf(cmd.OutOrStdout(),
