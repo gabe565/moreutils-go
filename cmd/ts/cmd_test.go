@@ -24,7 +24,7 @@ func TestTs(t *testing.T) {
 		{"format stamp", []string{"%b %e %H:%M:%S"}, "test\n", `[A-Z][a-z]{2} [\d ]\d \d{2}:\d{2}:\d{2}` + " test\n", require.NoError},
 		{"invalid format", []string{"%g"}, "test\n", "", require.Error},
 		{"relative", []string{"-r"}, "INFO " + now.Add(-1*time.Hour).Format(time.RFC3339) + " abc", "INFO " + `1h0m\ds ago` + " abc\n", require.NoError},
-		{"relative format", []string{"-r", "%a %b %e %T %Y"}, "INFO " + now.Add(-1*time.Hour).Format(time.RFC3339) + " abc", "INFO " + `[A-Z][a-z]{2} [A-Z][a-z]{2} [\d ]\d \d{2}:\d{2}:\d{2} \d{4}` + " abc", require.NoError},
+		{"relative format", []string{"-r", "%a %b %e %T %Y"}, "INFO " + now.Add(-1*time.Hour).Format(time.RFC3339) + " abc", "INFO " + `[A-Z][a-z]{2} [A-Z][a-z]{2} [\d ]\d \d{2}:\d{2}:\d{2} \d{4}` + " abc\n", require.NoError},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -34,7 +34,7 @@ func TestTs(t *testing.T) {
 			var stdout strings.Builder
 			cmd.SetOut(&stdout)
 			tt.wantErr(t, cmd.Execute())
-			assert.Regexp(t, tt.want, stdout.String())
+			assert.Regexp(t, "^"+tt.want+"$", stdout.String())
 		})
 	}
 }

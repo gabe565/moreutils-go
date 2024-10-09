@@ -40,7 +40,7 @@ func TestVipe(t *testing.T) {
 			cmd.SetOut(&stdout)
 			tt.wantErr(t, cmd.Execute())
 			if tt.wantIsRe {
-				assert.Regexp(t, tt.want, &stdout)
+				assert.Regexp(t, "^"+tt.want+"$", &stdout)
 			} else {
 				assert.Equal(t, tt.want, stdout.String())
 			}
