@@ -21,7 +21,6 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " file...",
 		Short:   "Check whether files are valid UTF-8",
-		Args:    cobra.MinimumNArgs(1),
 		RunE:    run,
 		GroupID: cmdutil.Applet,
 
@@ -41,12 +40,26 @@ func run(cmd *cobra.Command, args []string) error {
 
 	var notAllUTF8 bool
 	var errs []error
-	for _, arg := range args {
-		if err := checkFile(cmd, arg); err != nil {
+	if len(args) == 0 {
+		if util.IsTerminal(cmd.InOrStdin()) {
+			return cmd.Help()
+		}
+
+		if err := checkReader(cmd, "(standard input)", cmd.InOrStdin()); err != nil {
 			if errors.Is(err, errNotUTF8) {
 				notAllUTF8 = true
 			} else {
 				errs = append(errs, err)
+			}
+		}
+	} else {
+		for _, arg := range args {
+			if err := checkFile(cmd, arg); err != nil {
+				if errors.Is(err, errNotUTF8) {
+					notAllUTF8 = true
+				} else {
+					errs = append(errs, err)
+				}
 			}
 		}
 	}
@@ -68,7 +81,11 @@ func checkFile(cmd *cobra.Command, path string) error {
 		_ = f.Close()
 	}()
 
-	buf := bufio.NewReader(f)
+	return checkReader(cmd, path, f)
+}
+
+func checkReader(cmd *cobra.Command, path string, r io.Reader) error {
+	buf := bufio.NewReader(r)
 	line := int64(1)
 	var i, offset int64
 	for {

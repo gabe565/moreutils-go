@@ -38,9 +38,16 @@ func tempFile(t *testing.T, compress bool, content string) string {
 }
 
 func TestIsUTF8(t *testing.T) {
+	var bad strings.Builder
+	gzw := gzip.NewWriter(&bad)
+	_, err := gzw.Write([]byte("test"))
+	require.NoError(t, err)
+	require.NoError(t, gzw.Close())
+
 	tests := []struct {
 		name    string
 		args    []string
+		stdin   io.Reader
 		wantErr require.ErrorAssertionFunc
 	}{
 		{
@@ -49,6 +56,7 @@ func TestIsUTF8(t *testing.T) {
 				tempFile(t, false, "abc"),
 				tempFile(t, false, "def"),
 			},
+			nil,
 			require.NoError,
 		},
 		{
@@ -57,18 +65,35 @@ func TestIsUTF8(t *testing.T) {
 				tempFile(t, true, "abc"),
 				tempFile(t, true, "def"),
 			},
+			nil,
 			require.Error,
 		},
 		{
 			"not latin",
 			[]string{tempFile(t, false, "世界")},
+			nil,
 			require.NoError,
+		},
+		{
+			"stdin plain",
+			nil,
+			strings.NewReader("abc"),
+			require.NoError,
+		},
+		{
+			"stdin compressed",
+			nil,
+			strings.NewReader(bad.String()),
+			require.Error,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			cmd := New()
 			cmd.SetArgs(tt.args)
+			if tt.stdin != nil {
+				cmd.SetIn(tt.stdin)
+			}
 			var stdout strings.Builder
 			cmd.SetOut(&stdout)
 			tt.wantErr(t, cmd.Execute())
