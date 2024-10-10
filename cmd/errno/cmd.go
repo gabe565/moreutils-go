@@ -25,6 +25,8 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 		RunE:    run,
 		GroupID: cmdutil.Applet,
 		Hidden:  !Supported,
+
+		ValidArgsFunction: validArgs,
 	}
 
 	cmd.Flags().BoolP(FlagList, "l", false, "List all errno values")

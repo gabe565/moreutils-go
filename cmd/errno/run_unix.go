@@ -14,6 +14,28 @@ import (
 
 const Supported = true
 
+func validArgs(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
+	if util.Must2(cmd.Flags().GetBool(FlagList)) {
+		return nil, cobra.ShellCompDirectiveNoFileComp
+	}
+
+	search := util.Must2(cmd.Flags().GetBool(FlagSearch))
+
+	var completions []string
+	for e := range errno.Iter() {
+		if search {
+			completions = append(completions, e.Error()+"\t"+e.Name()+" "+strconv.Itoa(int(e.Errno)))
+		} else {
+			num := strconv.Itoa(int(e.Errno))
+			completions = append(completions,
+				num+"\t"+e.Name()+" "+e.Error(),
+				e.Name()+"\t"+num+" "+e.Error(),
+			)
+		}
+	}
+	return completions, cobra.ShellCompDirectiveNoFileComp
+}
+
 func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
