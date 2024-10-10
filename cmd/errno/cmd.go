@@ -22,7 +22,6 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " { name | code }",
 		Short:   "Look up errno names and descriptions",
-		Args:    cobra.MaximumNArgs(1),
 		RunE:    run,
 		GroupID: cmdutil.Applet,
 		Hidden:  !Supported,

@@ -26,14 +26,15 @@ func run(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
+	if len(args) == 0 {
+		cmd.SilenceUsage = false
+		return cobra.MinimumNArgs(1)(cmd, args)
+	}
+
 	if util.Must2(cmd.Flags().GetBool(FlagSearch)) {
-		if len(args) == 0 {
-			cmd.SilenceUsage = false
-			return cobra.ExactArgs(1)(cmd, args)
-		}
-		searchStr := strings.ToLower(args[0])
+		search := strings.ToLower(strings.Join(args, " "))
 		for e := range errno.Iter() {
-			if strings.Contains(e.Error(), searchStr) {
+			if strings.Contains(e.Error(), search) {
 				if err := printErrno(cmd, e); err != nil {
 					return err
 				}
@@ -42,17 +43,18 @@ func run(cmd *cobra.Command, args []string) error {
 		return nil
 	}
 
-	if len(args) == 0 {
-		cmd.SilenceUsage = false
-		return cobra.ExactArgs(1)(cmd, args)
+	var errs []error
+	for _, arg := range args {
+		if err := findErrno(cmd, arg); err != nil {
+			errs = append(errs, err)
+		}
 	}
+	return util.JoinErrors(errs...)
+}
 
-	if len(args) == 0 {
-		return nil
-	}
-
+func findErrno(cmd *cobra.Command, arg string) error {
 	// Get code by name
-	if code, err := strconv.Atoi(args[0]); err == nil {
+	if code, err := strconv.Atoi(arg); err == nil {
 		if e := errno.New(code); e.Valid() {
 			return printErrno(cmd, e)
 		}
@@ -61,11 +63,11 @@ func run(cmd *cobra.Command, args []string) error {
 
 	// Get code by number
 	for e := range errno.Iter() {
-		if e.Name() == args[0] {
+		if e.Name() == arg {
 			return printErrno(cmd, e)
 		}
 	}
-	return fmt.Errorf("%w: %s", ErrUnknown, args[0])
+	return fmt.Errorf("%w: %s", ErrUnknown, arg)
 }
 
 func printErrno(cmd *cobra.Command, e *errno.Errno) error {
