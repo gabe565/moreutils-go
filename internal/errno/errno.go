@@ -3,6 +3,7 @@
 package errno
 
 import (
+	"strings"
 	"syscall"
 
 	"golang.org/x/exp/constraints"
@@ -50,6 +51,9 @@ func (e *Errno) Name() string {
 func (e *Errno) Error() string {
 	if e.desc == "" {
 		e.desc = e.Errno.Error()
+		if len(e.desc) >= 2 {
+			e.desc = strings.ToUpper(e.desc[0:1]) + e.desc[1:]
+		}
 	}
 	return e.desc
 }

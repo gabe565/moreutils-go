@@ -34,7 +34,7 @@ func run(cmd *cobra.Command, args []string) error {
 	if util.Must2(cmd.Flags().GetBool(FlagSearch)) {
 		search := strings.ToLower(strings.Join(args, " "))
 		for e := range errno.Iter() {
-			if strings.Contains(e.Error(), search) {
+			if strings.Contains(strings.ToLower(e.Error()), search) {
 				if err := printErrno(cmd, e); err != nil {
 					return err
 				}
@@ -71,8 +71,6 @@ func findErrno(cmd *cobra.Command, arg string) error {
 }
 
 func printErrno(cmd *cobra.Command, e *errno.Errno) error {
-	pretty := e.Error()
-	pretty = strings.ToUpper(pretty[0:1]) + pretty[1:]
-	_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s %d %s\n", e.Name(), uint(e.Errno), pretty)
+	_, err := fmt.Fprintf(cmd.OutOrStdout(), "%s %d %s\n", e.Name(), uint(e.Errno), e.Error())
 	return err
 }
