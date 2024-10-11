@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -172,8 +173,8 @@ func (f formatter) Sprint(cmd *cobra.Command, iface *net.Interface) (string, err
 
 func getBroadcastAddr(addr *net.IPNet) net.IP {
 	if ip := addr.IP.To4(); ip != nil {
-		mask := net.IP(addr.Mask)
-		for i, b := range mask {
+		ip := slices.Clone(ip)
+		for i, b := range addr.Mask {
 			ip[i] |= ^b
 		}
 		return ip
