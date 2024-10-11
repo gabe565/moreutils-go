@@ -2,8 +2,8 @@ package ifdata
 
 import (
 	"fmt"
-	"io"
 	"net"
+	"strconv"
 	"time"
 
 	"github.com/prometheus/procfs"
@@ -12,20 +12,19 @@ import (
 
 const statisticsSupported = true
 
-func statistics(cmd *cobra.Command, op formatter, iface *net.Interface) error {
-	handle := statsHandler(op)
-	if handle == nil {
+func (f formatter) formatStatistics(cmd *cobra.Command, iface *net.Interface) (string, error) {
+	format := statsFormatter(f)
+	if format == nil {
 		cmd.SilenceUsage = false
-		return fmt.Errorf("%w: %s", ErrUnknownFormatter, op)
+		return "", fmt.Errorf("%w: %s", ErrUnknownFormatter, f)
 	}
 
 	device, err := getNetDevLine(iface.Name)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	_, err = handle(cmd.OutOrStdout(), device)
-	return err
+	return format(device)
 }
 
 func getNetDevLine(name string) (*procfs.NetDevLine, error) {
@@ -48,78 +47,78 @@ func getNetDevLine(name string) (*procfs.NetDevLine, error) {
 	return nil, fmt.Errorf("%w: %s", ErrInterfaceMissing, name)
 }
 
-func statsHandler(op formatter) func(w io.Writer, d *procfs.NetDevLine) (int, error) {
+func statsFormatter(op formatter) func(d *procfs.NetDevLine) (string, error) {
 	switch op {
 	case fmtInputStatistics:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) {
-			return fmt.Fprintf(w, "%d %d %d %d %d %d %d %d\n",
+		return func(d *procfs.NetDevLine) (string, error) {
+			return fmt.Sprintf("%d %d %d %d %d %d %d %d",
 				d.RxBytes, d.RxPackets,
 				d.RxErrors, d.RxDropped,
 				d.RxFIFO, d.RxFrame,
 				d.RxCompressed, d.RxMulticast,
-			)
+			), nil
 		}
 	case fmtInputPackets:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxPackets) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.RxPackets, 10), nil }
 	case fmtInputBytes:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxBytes) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.RxBytes, 10), nil }
 	case fmtInputErrors:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxErrors) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.RxErrors, 10), nil }
 	case fmtInputDropped:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxDropped) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.RxDropped, 10), nil }
 	case fmtInputFIFO:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxFIFO) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.RxFIFO, 10), nil }
 	case fmtInputCompressed:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxCompressed) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.RxCompressed, 10), nil }
 	case fmtInputMulticast:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.RxMulticast) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.RxMulticast, 10), nil }
 	case fmtInputBytesSecond:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) {
+		return func(d *procfs.NetDevLine) (string, error) {
 			time.Sleep(time.Second)
 
 			d2, err := getNetDevLine(d.Name)
 			if err != nil {
-				return 0, err
+				return "", err
 			}
 
-			return fmt.Fprintln(w, d2.RxBytes-d.RxBytes)
+			return strconv.FormatUint(d2.RxBytes-d.RxBytes, 10), nil
 		}
 
 	case fmtOutputStatistics:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) {
-			return fmt.Fprintf(w, "%d %d %d %d %d %d %d %d\n",
+		return func(d *procfs.NetDevLine) (string, error) {
+			return fmt.Sprintf("%d %d %d %d %d %d %d %d",
 				d.TxBytes, d.TxPackets,
 				d.TxErrors, d.TxDropped,
 				d.TxFIFO, d.TxCollisions,
 				d.TxCarrier, 0,
-			)
+			), nil
 		}
 	case fmtOutputPackets:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxPackets) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.TxPackets, 10), nil }
 	case fmtOutputBytes:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxBytes) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.TxBytes, 10), nil }
 	case fmtOutputErrors:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxErrors) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.TxErrors, 10), nil }
 	case fmtOutputDropped:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxDropped) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.TxDropped, 10), nil }
 	case fmtOutputFIFO:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxFIFO) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.TxFIFO, 10), nil }
 	case fmtOutputCollisions:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxCollisions) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.TxCollisions, 10), nil }
 	case fmtOutputCarrierLosses:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, d.TxCarrier) }
+		return func(d *procfs.NetDevLine) (string, error) { return strconv.FormatUint(d.TxCarrier, 10), nil }
 	case fmtOutputMulticast:
-		return func(w io.Writer, _ *procfs.NetDevLine) (int, error) { return fmt.Fprintln(w, 0) }
+		return func(_ *procfs.NetDevLine) (string, error) { return "0", nil }
 	case fmtOutputBytesSecond:
-		return func(w io.Writer, d *procfs.NetDevLine) (int, error) {
+		return func(d *procfs.NetDevLine) (string, error) {
 			time.Sleep(time.Second)
 
 			d2, err := getNetDevLine(d.Name)
 			if err != nil {
-				return 0, err
+				return "", err
 			}
 
-			return fmt.Fprintln(w, d2.TxBytes-d.TxBytes)
+			return strconv.FormatUint(d2.TxBytes-d.TxBytes, 10), nil
 		}
 
 	default:

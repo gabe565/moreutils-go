@@ -1,5 +1,15 @@
 package ifdata
 
+import (
+	"errors"
+	"fmt"
+	"net"
+	"strconv"
+	"strings"
+
+	"github.com/spf13/cobra"
+)
+
 //go:generate go run github.com/dmarkham/enumer -type formatter -linecomment -output formatter_string.go
 
 type formatter uint8
@@ -108,4 +118,65 @@ func (f formatter) description() string {
 
 func (f formatter) supported() bool {
 	return statisticsSupported || uint8(f) < uint8(fmtInputStatistics)
+}
+
+var ErrUnknownFormatter = errors.New("unknown formatter")
+
+func (f formatter) Sprint(cmd *cobra.Command, iface *net.Interface) (string, error) {
+	switch f {
+	case fmtMTU:
+		return strconv.Itoa(iface.MTU), nil
+	case fmtFlags:
+		return strings.Join(strings.Split(iface.Flags.String(), "|"), "\n"), nil
+	case fmtHardwareAddress:
+		return strings.ToUpper(iface.HardwareAddr.String()), nil
+	case fmtAddress, fmtNetmask, fmtNetworkAddress, fmtBroadcastAddress, fmtPrint:
+		addrs, err := iface.Addrs()
+		if err != nil {
+			return "", err
+		}
+
+		var buf strings.Builder
+		for _, addr := range addrs {
+			if addr, ok := addr.(*net.IPNet); ok && addr.IP.To4() != nil {
+				switch f {
+				case fmtAddress:
+					_, _ = fmt.Fprintln(&buf, addr.IP)
+				case fmtNetmask:
+					_, _ = fmt.Fprintln(&buf, net.IP(addr.Mask))
+				case fmtNetworkAddress:
+					_, _ = fmt.Fprintln(&buf, addr.IP.Mask(addr.Mask))
+				case fmtBroadcastAddress:
+					_, _ = fmt.Fprintln(&buf, getBroadcastAddr(addr))
+				case fmtPrint:
+					_, _ = fmt.Fprintf(&buf,
+						"%s %s %s %d\n",
+						addr.IP,
+						net.IP(addr.Mask).String(),
+						getBroadcastAddr(addr),
+						iface.MTU,
+					)
+				}
+			}
+		}
+		return strings.TrimSpace(buf.String()), nil
+	default:
+		if f.supported() {
+			return f.formatStatistics(cmd, iface)
+		}
+
+		cmd.SilenceUsage = false
+		return "", fmt.Errorf("%w: %s", ErrUnknownFormatter, f)
+	}
+}
+
+func getBroadcastAddr(addr *net.IPNet) net.IP {
+	if ip := addr.IP.To4(); ip != nil {
+		mask := net.IP(addr.Mask)
+		for i, b := range mask {
+			ip[i] |= ^b
+		}
+		return ip
+	}
+	return nil
 }

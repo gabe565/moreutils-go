@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"io"
 	"net"
 	"strings"
 
@@ -72,7 +73,6 @@ func validArgs(_ *cobra.Command, args []string, _ string) ([]string, cobra.Shell
 
 var (
 	ErrNoFormatter           = errors.New("no formatter was provided")
-	ErrUnknownFormatter      = errors.New("unknown formatter")
 	ErrNoInterface           = errors.New("no interface was provided")
 	ErrInterfaceMissing      = errors.New("interface missing from /proc/net/dev")
 	ErrStatisticsUnsupported = errors.New("platform does not support interface statistics")
@@ -83,7 +83,7 @@ func run(cmd *cobra.Command, args []string) error {
 		return cmd.Help()
 	}
 
-	var op formatter
+	var format formatter
 	var name string
 	for _, arg := range args {
 		switch {
@@ -100,7 +100,7 @@ func run(cmd *cobra.Command, args []string) error {
 			}
 		case strings.HasPrefix(arg, "-"):
 			var err error
-			if op, err = formatterString(arg); err != nil {
+			if format, err = formatterString(arg); err != nil {
 				return err
 			}
 		default:
@@ -109,7 +109,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	switch {
-	case op == fmtNone:
+	case format == fmtNone:
 		return ErrNoFormatter
 	case name == "":
 		return ErrNoInterface
@@ -118,11 +118,11 @@ func run(cmd *cobra.Command, args []string) error {
 
 	iface, err := net.InterfaceByName(name)
 
-	if op == fmtPrintExists {
+	if format == fmtPrintExists {
 		if err != nil {
-			_, _ = fmt.Fprintln(cmd.OutOrStdout(), "no")
+			_, _ = io.WriteString(cmd.OutOrStdout(), "no\n")
 		} else {
-			_, _ = fmt.Fprintln(cmd.OutOrStdout(), "yes")
+			_, _ = io.WriteString(cmd.OutOrStdout(), "yes\n")
 		}
 		return nil
 	}
@@ -131,66 +131,15 @@ func run(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("%w: %s", err, name)
 	}
 
-	if op == fmtExists {
+	if format == fmtExists {
 		return nil
 	}
 
-	switch op {
-	case fmtMTU:
-		_, _ = fmt.Fprintln(cmd.OutOrStdout(), iface.MTU)
-	case fmtFlags:
-		for _, flag := range strings.Split(iface.Flags.String(), "|") {
-			_, _ = fmt.Fprintln(cmd.OutOrStdout(), flag)
-		}
-	case fmtHardwareAddress:
-		_, _ = fmt.Fprintln(cmd.OutOrStdout(), strings.ToUpper(iface.HardwareAddr.String()))
-	case fmtAddress, fmtNetmask, fmtNetworkAddress, fmtBroadcastAddress, fmtPrint:
-		addrs, err := iface.Addrs()
-		if err != nil {
-			return err
-		}
-
-		for _, addr := range addrs {
-			if addr, ok := addr.(*net.IPNet); ok && addr.IP.To4() != nil {
-				switch op {
-				case fmtAddress:
-					_, _ = fmt.Fprintln(cmd.OutOrStdout(), addr.IP)
-				case fmtNetmask:
-					_, _ = fmt.Fprintln(cmd.OutOrStdout(), net.IP(addr.Mask))
-				case fmtNetworkAddress:
-					_, _ = fmt.Fprintln(cmd.OutOrStdout(), addr.IP.Mask(addr.Mask))
-				case fmtBroadcastAddress:
-					_, _ = fmt.Fprintln(cmd.OutOrStdout(), getBroadcastAddr(addr))
-				case fmtPrint:
-					_, _ = fmt.Fprintf(cmd.OutOrStdout(),
-						"%s %s %s %d\n",
-						addr.IP,
-						net.IP(addr.Mask).String(),
-						getBroadcastAddr(addr),
-						iface.MTU,
-					)
-				}
-			}
-		}
-	default:
-		if statisticsSupported {
-			return statistics(cmd, op, iface)
-		}
-
-		cmd.SilenceUsage = false
-		return fmt.Errorf("%w: %s", ErrUnknownFormatter, op)
+	s, err := format.Sprint(cmd, iface)
+	if err != nil {
+		return err
 	}
 
-	return nil
-}
-
-func getBroadcastAddr(addr *net.IPNet) net.IP {
-	if ip := addr.IP.To4(); ip != nil {
-		mask := net.IP(addr.Mask)
-		for i, b := range mask {
-			ip[i] |= ^b
-		}
-		return ip
-	}
-	return nil
+	_, err = io.WriteString(cmd.OutOrStdout(), s+"\n")
+	return err
 }
