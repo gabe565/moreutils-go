@@ -14,8 +14,8 @@ ifdata [flags] interface
   -p      Prints out the whole configuration of the interface
   -pe     Prints "yes" or "no" if the interface exists or not
   -pa     Prints the IP address of the interface
-  -pn     Prints the netmask of the interface
   -pN     Prints the network address of the interface
+  -pn     Prints the netmask of the interface
   -pb     Prints the broadcast address of the interface
   -pm     Prints the MTU of the interface
   -pf     Prints the hardware address of the interface. Exit with a failure exit code if there is not hardware address for the given network interface

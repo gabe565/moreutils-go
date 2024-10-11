@@ -11,8 +11,8 @@ const (
 	fmtPrint            // -p
 	fmtPrintExists      // -pe
 	fmtAddress          // -pa
-	fmtNetmask          // -pn
 	fmtNetworkAddress   // -pN
+	fmtNetmask          // -pn
 	fmtBroadcastAddress // -pb
 	fmtMTU              // -pm
 	fmtFlags            // -pf

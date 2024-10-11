@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const _formatterName = "-e-p-pe-pa-pn-pN-pb-pm-pf-ph-si-sip-sib-sie-sid-sif-sic-sim-so-sop-sob-soe-sod-sof-sox-soc-som-bips-bops"
+const _formatterName = "-e-p-pe-pa-pN-pn-pb-pm-pf-ph-si-sip-sib-sie-sid-sif-sic-sim-so-sop-sob-soe-sod-sof-sox-soc-som-bips-bops"
 
 var _formatterIndex = [...]uint8{0, 0, 2, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 35, 39, 43, 47, 51, 55, 59, 62, 66, 70, 74, 78, 82, 86, 90, 94, 99, 104}
 
@@ -29,8 +29,8 @@ func _formatterNoOp() {
 	_ = x[fmtPrint-(2)]
 	_ = x[fmtPrintExists-(3)]
 	_ = x[fmtAddress-(4)]
-	_ = x[fmtNetmask-(5)]
-	_ = x[fmtNetworkAddress-(6)]
+	_ = x[fmtNetworkAddress-(5)]
+	_ = x[fmtNetmask-(6)]
 	_ = x[fmtBroadcastAddress-(7)]
 	_ = x[fmtMTU-(8)]
 	_ = x[fmtFlags-(9)]
@@ -56,7 +56,7 @@ func _formatterNoOp() {
 	_ = x[fmtOutputBytesSecond-(29)]
 }
 
-var _formatterValues = []formatter{fmtNone, fmtExists, fmtPrint, fmtPrintExists, fmtAddress, fmtNetmask, fmtNetworkAddress, fmtBroadcastAddress, fmtMTU, fmtFlags, fmtHardwareAddress, fmtInputStatistics, fmtInputPackets, fmtInputBytes, fmtInputErrors, fmtInputDropped, fmtInputFIFO, fmtInputCompressed, fmtInputMulticast, fmtOutputStatistics, fmtOutputPackets, fmtOutputBytes, fmtOutputErrors, fmtOutputDropped, fmtOutputFIFO, fmtOutputCollisions, fmtOutputCarrierLosses, fmtOutputMulticast, fmtInputBytesSecond, fmtOutputBytesSecond}
+var _formatterValues = []formatter{fmtNone, fmtExists, fmtPrint, fmtPrintExists, fmtAddress, fmtNetworkAddress, fmtNetmask, fmtBroadcastAddress, fmtMTU, fmtFlags, fmtHardwareAddress, fmtInputStatistics, fmtInputPackets, fmtInputBytes, fmtInputErrors, fmtInputDropped, fmtInputFIFO, fmtInputCompressed, fmtInputMulticast, fmtOutputStatistics, fmtOutputPackets, fmtOutputBytes, fmtOutputErrors, fmtOutputDropped, fmtOutputFIFO, fmtOutputCollisions, fmtOutputCarrierLosses, fmtOutputMulticast, fmtInputBytesSecond, fmtOutputBytesSecond}
 
 var _formatterNameToValueMap = map[string]formatter{
 	_formatterName[0:0]:         fmtNone,
@@ -69,10 +69,10 @@ var _formatterNameToValueMap = map[string]formatter{
 	_formatterLowerName[4:7]:    fmtPrintExists,
 	_formatterName[7:10]:        fmtAddress,
 	_formatterLowerName[7:10]:   fmtAddress,
-	_formatterName[10:13]:       fmtNetmask,
-	_formatterLowerName[10:13]:  fmtNetmask,
-	_formatterName[13:16]:       fmtNetworkAddress,
-	_formatterLowerName[13:16]:  fmtNetworkAddress,
+	_formatterName[10:13]:       fmtNetworkAddress,
+	_formatterLowerName[10:13]:  fmtNetworkAddress,
+	_formatterName[13:16]:       fmtNetmask,
+	_formatterLowerName[13:16]:  fmtNetmask,
 	_formatterName[16:19]:       fmtBroadcastAddress,
 	_formatterLowerName[16:19]:  fmtBroadcastAddress,
 	_formatterName[19:22]:       fmtMTU,
