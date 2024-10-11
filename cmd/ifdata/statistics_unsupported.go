@@ -2,14 +2,10 @@
 
 package ifdata
 
-import (
-	"net"
-
-	"github.com/spf13/cobra"
-)
+import "net"
 
 const statisticsSupported = false
 
-func (f formatter) formatStatistics(_ *cobra.Command, _ *net.Interface) (string, error) {
+func (f formatter) formatStatistics(_ *net.Interface) (string, error) {
 	return "", ErrStatisticsUnsupported
 }

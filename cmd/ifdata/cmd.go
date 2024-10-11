@@ -164,8 +164,11 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	for _, iface := range ifaces {
-		s, err := format.Sprint(cmd, iface)
+		s, err := format.Sprint(iface)
 		if err != nil {
+			if errors.Is(err, ErrUnknownFormatter) {
+				cmd.SilenceUsage = false
+			}
 			errs = append(errs, err)
 			continue
 		}

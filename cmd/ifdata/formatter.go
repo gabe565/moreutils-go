@@ -7,8 +7,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-
-	"github.com/spf13/cobra"
 )
 
 //go:generate go run github.com/dmarkham/enumer -type formatter -linecomment -output formatter_string.go
@@ -123,7 +121,7 @@ func (f formatter) supported() bool {
 
 var ErrUnknownFormatter = errors.New("unknown formatter")
 
-func (f formatter) Sprint(cmd *cobra.Command, iface *net.Interface) (string, error) {
+func (f formatter) Sprint(iface *net.Interface) (string, error) {
 	switch f {
 	case fmtMTU:
 		return strconv.Itoa(iface.MTU), nil
@@ -163,10 +161,8 @@ func (f formatter) Sprint(cmd *cobra.Command, iface *net.Interface) (string, err
 		return strings.TrimSpace(buf.String()), nil
 	default:
 		if f.supported() {
-			return f.formatStatistics(cmd, iface)
+			return f.formatStatistics(iface)
 		}
-
-		cmd.SilenceUsage = false
 		return "", fmt.Errorf("%w: %s", ErrUnknownFormatter, f)
 	}
 }

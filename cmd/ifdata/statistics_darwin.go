@@ -8,16 +8,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/spf13/cobra"
 	"golang.org/x/sys/unix"
 )
 
 const statisticsSupported = true
 
-func (f formatter) formatStatistics(cmd *cobra.Command, iface *net.Interface) (string, error) {
+func (f formatter) formatStatistics(iface *net.Interface) (string, error) {
 	format := statsFormatter(f)
 	if format == nil {
-		cmd.SilenceUsage = false
 		return "", fmt.Errorf("%w: %s", ErrUnknownFormatter, f)
 	}
 
