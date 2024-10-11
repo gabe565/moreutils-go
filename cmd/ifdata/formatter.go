@@ -1,6 +1,6 @@
 package ifdata
 
-//go:generate enumer -type formatter -linecomment -output formatter_string.go
+//go:generate go run github.com/dmarkham/enumer -type formatter -linecomment -output formatter_string.go
 
 type formatter uint8
 
