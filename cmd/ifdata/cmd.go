@@ -66,7 +66,7 @@ func validArgs(_ *cobra.Command, args []string, _ string) ([]string, cobra.Shell
 		desc := make([]string, 0, len(addrs))
 		for _, addr := range addrs {
 			if addr, ok := addr.(*net.IPNet); ok && addr.IP.To4() != nil {
-				desc = append(desc, addr.String())
+				desc = append(desc, addr.IP.String())
 			}
 		}
 		names = append(names, iface.Name+"\t"+strings.Join(desc, ","))
