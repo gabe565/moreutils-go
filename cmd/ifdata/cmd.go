@@ -1,11 +1,13 @@
 package ifdata
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
 	"html/template"
 	"io"
 	"net"
+	"slices"
 	"strings"
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
@@ -155,6 +157,10 @@ func run(cmd *cobra.Command, args []string) error {
 		for _, iface := range v {
 			ifaces = append(ifaces, &iface)
 		}
+
+		slices.SortStableFunc(ifaces, func(a, b *net.Interface) int {
+			return cmp.Compare(a.Name, b.Name)
+		})
 	}
 
 	for _, iface := range ifaces {
