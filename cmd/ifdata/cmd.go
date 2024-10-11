@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/gabe565/moreutils/internal/cmdutil"
+	"github.com/gabe565/moreutils/internal/util"
 	"github.com/spf13/cobra"
 )
 
@@ -84,7 +85,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	var format formatter
-	var name string
+	names := make([]string, 0, len(args)-1)
 	for _, arg := range args {
 		switch {
 		case arg == "-h", arg == "--help":
@@ -104,42 +105,71 @@ func run(cmd *cobra.Command, args []string) error {
 				return err
 			}
 		default:
-			name = arg
+			names = append(names, arg)
 		}
 	}
+	args = names
 
 	switch {
 	case format == fmtNone:
 		return ErrNoFormatter
-	case name == "":
+	case len(args) == 0 && (format == fmtExists || format == fmtPrintExists):
 		return ErrNoInterface
 	}
 	cmd.SilenceUsage = true
 
-	iface, err := net.InterfaceByName(name)
-
-	if format == fmtPrintExists {
-		if err != nil {
-			_, _ = io.WriteString(cmd.OutOrStdout(), "no\n")
+	ifaces := make([]*net.Interface, 0, len(args))
+	var errs []error
+	for _, arg := range args {
+		iface, err := net.InterfaceByName(arg)
+		if format == fmtPrintExists {
+			var s string
+			if len(args) != 1 {
+				s += arg + " "
+			}
+			if err == nil {
+				s += "yes\n"
+			} else {
+				s += "no\n"
+			}
+			_, _ = io.WriteString(cmd.OutOrStdout(), s)
 		} else {
-			_, _ = io.WriteString(cmd.OutOrStdout(), "yes\n")
+			if err == nil {
+				ifaces = append(ifaces, iface)
+			} else {
+				errs = append(errs, fmt.Errorf("%w: %s", err, arg))
+			}
 		}
-		return nil
 	}
 
-	if err != nil {
-		return fmt.Errorf("%w: %s", err, name)
+	if format == fmtExists || format == fmtPrintExists {
+		return errors.Join(errs...)
 	}
 
-	if format == fmtExists {
-		return nil
+	if len(ifaces) == 0 {
+		v, err := net.Interfaces()
+		if err != nil {
+			return err
+		}
+
+		for _, iface := range v {
+			ifaces = append(ifaces, &iface)
+		}
 	}
 
-	s, err := format.Sprint(cmd, iface)
-	if err != nil {
-		return err
-	}
+	for _, iface := range ifaces {
+		s, err := format.Sprint(cmd, iface)
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
 
-	_, err = io.WriteString(cmd.OutOrStdout(), s+"\n")
-	return err
+		if s != "" {
+			if len(args) != 1 {
+				s = iface.Name + " " + s
+			}
+			_, _ = io.WriteString(cmd.OutOrStdout(), s+"\n")
+		}
+	}
+	return util.JoinErrors(errs...)
 }
