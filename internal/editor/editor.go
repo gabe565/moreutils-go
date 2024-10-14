@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 
-	"gabe565.com/moreutils/internal/util"
 	"github.com/google/shlex"
 	"github.com/mattn/go-tty"
 )
@@ -26,13 +25,13 @@ func Get() ([]string, error) {
 	var errs []error
 	for _, env := range []string{envEditor, envVisual} {
 		if editor, err := parseEnv(env); err == nil {
-			return editor, util.JoinErrors(errs...)
+			return editor, errors.Join(errs...)
 		} else if !errors.Is(err, ErrUnset) {
 			errs = append(errs, err)
 		}
 	}
 
-	return []string{defaultEditor}, util.JoinErrors(errs...)
+	return []string{defaultEditor}, errors.Join(errs...)
 }
 
 func parseEnv(env string) ([]string, error) {

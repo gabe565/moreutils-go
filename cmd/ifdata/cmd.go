@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"gabe565.com/moreutils/internal/cmdutil"
-	"gabe565.com/moreutils/internal/util"
 	"github.com/spf13/cobra"
 )
 
@@ -180,5 +179,5 @@ func run(cmd *cobra.Command, args []string) error {
 			_, _ = io.WriteString(cmd.OutOrStdout(), s+"\n")
 		}
 	}
-	return util.JoinErrors(errs...)
+	return errors.Join(errs...)
 }

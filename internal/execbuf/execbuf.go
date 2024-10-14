@@ -7,8 +7,6 @@ import (
 	"slices"
 	"sync"
 	"time"
-
-	"gabe565.com/moreutils/internal/util"
 )
 
 // Buffer is an io.Writer that buffers exec.Cmd output.
@@ -86,7 +84,7 @@ func (e *Buffer) Print(source io.Writer) error {
 		}
 	}
 
-	return util.JoinErrors(errs...)
+	return errors.Join(errs...)
 }
 
 // Bytes returns the bytes for a source, or all sources if nil.

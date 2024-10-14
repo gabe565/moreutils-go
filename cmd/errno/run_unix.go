@@ -3,6 +3,7 @@
 package errno
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -71,7 +72,7 @@ func run(cmd *cobra.Command, args []string) error {
 			errs = append(errs, err)
 		}
 	}
-	return util.JoinErrors(errs...)
+	return errors.Join(errs...)
 }
 
 func findErrno(cmd *cobra.Command, arg string) error {

@@ -1,6 +1,7 @@
 package pee
 
 import (
+	"errors"
 	"io"
 	"os/exec"
 	"os/signal"
@@ -115,5 +116,5 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	wg.Wait()
-	return util.JoinErrors(errs...)
+	return errors.Join(errs...)
 }

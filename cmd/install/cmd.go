@@ -1,6 +1,7 @@
 package install
 
 import (
+	"errors"
 	"os"
 	"path"
 	"path/filepath"
@@ -88,7 +89,7 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	return util.JoinErrors(errs...)
+	return errors.Join(errs...)
 }
 
 func link(symbolic bool, oldname, newname string) error {

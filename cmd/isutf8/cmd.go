@@ -67,7 +67,7 @@ func run(cmd *cobra.Command, args []string) error {
 	if notAllUTF8 {
 		errs = append(errs, ErrNotAllUTF8)
 	}
-	return util.JoinErrors(errs...)
+	return errors.Join(errs...)
 }
 
 var errNotUTF8 = errors.New("file is not UTF-8 encoded")

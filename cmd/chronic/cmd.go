@@ -78,5 +78,5 @@ func printBuf(cmd *cobra.Command, buf *execbuf.Buffer, exitCode int, verbose boo
 	errs = append(errs, buf.Print(cmd.ErrOrStderr()))
 
 	_, _ = fmt.Fprintln(cmd.OutOrStdout(), "\nRETVAL:", strconv.Itoa(exitCode))
-	return util.JoinErrors(errs...)
+	return errors.Join(errs...)
 }

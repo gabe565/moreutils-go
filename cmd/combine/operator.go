@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-
-	"gabe565.com/moreutils/internal/util"
 )
 
 //go:generate go run github.com/dmarkham/enumer -type operator -trimprefix operator -transform lower -output operator_string.go
@@ -39,7 +37,7 @@ func (op operator) compare(out io.Writer, r1, r2 io.ReadSeeker) error {
 
 // compareOr outputs lines from both r1 and r2
 func compareOr(out io.Writer, r1, r2 io.Reader) error {
-	return util.JoinErrors(
+	return errors.Join(
 		iterLines(r1, func(line string) error {
 			_, err := fmt.Fprintln(out, line)
 			return err
