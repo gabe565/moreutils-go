@@ -1,7 +1,7 @@
 # moreutils-go
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/gabe565/moreutils)](https://github.com/gabe565/moreutils/releases)
-[![Build](https://github.com/gabe565/moreutils/actions/workflows/build.yaml/badge.svg)](https://github.com/gabe565/moreutils/actions/workflows/build.yaml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/gabe565/moreutils)](https://goreportcard.com/report/github.com/gabe565/moreutils)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/gabe565/moreutils-go)](https://github.com/gabe565/moreutils-go/releases)
+[![Build](https://github.com/gabe565/moreutils-go/actions/workflows/build.yaml/badge.svg)](https://github.com/gabe565/moreutils-go/actions/workflows/build.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/gabe565/moreutils-go)](https://goreportcard.com/report/github.com/gabe565/moreutils-go)
 
 A Go rewrite of [moreutils](http://kitenet.net/~joey/code/moreutils/): A collection of the Unix tools that nobody thought to write long ago when Unix was young.
 
@@ -114,7 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: gabe565/moreutils@v0
+      - uses: gabe565/moreutils-go@v0
       - run: echo hello world | ts
 ```
 
@@ -150,7 +150,7 @@ CMD echo hello world | ts
 <details>
   <summary>Click to expand</summary>
 
-1. Download and run the [latest release binary](https://github.com/gabe565/moreutils/releases/latest) for your system and architecture.
+1. Download and run the [latest release binary](https://github.com/gabe565/moreutils-go/releases/latest) for your system and architecture.
 2. Extract the binary and place it in the desired directory.
 3. Run `moreutils install -sr DIRECTORY` to generate symlinks for each command.
 </details>

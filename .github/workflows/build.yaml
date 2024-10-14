@@ -70,7 +70,7 @@ jobs:
         with:
           app-id: ${{ secrets.BOT_APP_ID }}
           private-key: ${{ secrets.BOT_APP_PRIVATE_KEY }}
-          repositories: moreutils,homebrew-tap
+          repositories: moreutils-go,homebrew-tap
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
@@ -83,7 +83,7 @@ jobs:
       - name: Push beta image
         if: github.ref_name == 'main'
         run: |
-          export REPO="$(tr '[[:upper:]]' '[[:lower:]]' <<< "ghcr.io/$GITHUB_REPOSITORY")"
+          export REPO="$(tr '[[:upper:]]' '[[:lower:]]' <<< "ghcr.io/gabe565/moreutils")"
           IMAGES=()
           while read -r SOURCE DEST; do
             docker tag "$SOURCE" "$DEST"
