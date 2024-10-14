@@ -5,8 +5,8 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/internal/cmdutil/subcommands"
+	"gabe565.com/moreutils/internal/util"
 	"github.com/spf13/cobra"
 )
 

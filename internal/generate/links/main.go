@@ -4,8 +4,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gabe565/moreutils/cmd"
-	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
+	"gabe565.com/moreutils/cmd"
+	"gabe565.com/moreutils/internal/cmdutil/subcommands"
 )
 
 func main() {

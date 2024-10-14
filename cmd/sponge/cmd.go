@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gabe565/moreutils/internal/cmdutil"
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/moreutils/internal/util"
 	"github.com/spf13/cobra"
 )
 

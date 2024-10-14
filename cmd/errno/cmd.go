@@ -3,7 +3,7 @@ package errno
 import (
 	"errors"
 
-	"github.com/gabe565/moreutils/internal/cmdutil"
+	"gabe565.com/moreutils/internal/cmdutil"
 	"github.com/spf13/cobra"
 )
 

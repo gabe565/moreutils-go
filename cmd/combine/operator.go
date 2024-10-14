@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/internal/util"
 )
 
 //go:generate go run github.com/dmarkham/enumer -type operator -trimprefix operator -transform lower -output operator_string.go

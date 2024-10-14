@@ -7,7 +7,7 @@ import (
 	"syscall"
 	"testing"
 
-	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
+	"gabe565.com/moreutils/internal/cmdutil/subcommands"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

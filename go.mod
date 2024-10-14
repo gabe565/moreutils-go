@@ -1,4 +1,4 @@
-module github.com/gabe565/moreutils
+module gabe565.com/moreutils
 
 go 1.23.2
 

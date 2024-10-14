@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"slices"
 
-	"github.com/gabe565/moreutils/cmd"
-	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
+	"gabe565.com/moreutils/cmd"
+	"gabe565.com/moreutils/internal/cmdutil/subcommands"
 	flag "github.com/spf13/pflag"
 )
 

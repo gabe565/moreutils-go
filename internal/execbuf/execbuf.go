@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/internal/util"
 )
 
 // Buffer is an io.Writer that buffers exec.Cmd output.

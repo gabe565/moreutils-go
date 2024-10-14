@@ -6,9 +6,9 @@ import (
 	"os/exec"
 	"strconv"
 
-	"github.com/gabe565/moreutils/internal/cmdutil"
-	"github.com/gabe565/moreutils/internal/execbuf"
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/moreutils/internal/execbuf"
+	"gabe565.com/moreutils/internal/util"
 	"github.com/spf13/cobra"
 )
 

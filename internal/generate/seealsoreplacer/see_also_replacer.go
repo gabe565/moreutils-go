@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"slices"
 
-	"github.com/gabe565/moreutils/cmd"
+	"gabe565.com/moreutils/cmd"
 	"github.com/spf13/cobra"
 )
 

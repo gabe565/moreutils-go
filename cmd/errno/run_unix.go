@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gabe565/moreutils/internal/errno"
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/internal/errno"
+	"gabe565.com/moreutils/internal/util"
 	"github.com/spf13/cobra"
 )
 

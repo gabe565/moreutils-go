@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/internal/util"
 	"github.com/google/shlex"
 	"github.com/mattn/go-tty"
 )

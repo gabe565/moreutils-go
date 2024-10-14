@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gabe565/moreutils/internal/cmdutil"
-	"github.com/gabe565/moreutils/internal/loadavg"
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/moreutils/internal/loadavg"
+	"gabe565.com/moreutils/internal/util"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 )

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gabe565/moreutils/internal/cmdutil"
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/moreutils/internal/util"
 	"github.com/gravwell/gravwell/v3/timegrinder"
 	"github.com/lestrrat-go/strftime"
 	"github.com/spf13/cobra"

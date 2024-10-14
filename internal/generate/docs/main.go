@@ -9,12 +9,12 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/gabe565/moreutils/cmd"
-	"github.com/gabe565/moreutils/cmd/ifdata"
-	"github.com/gabe565/moreutils/internal/cmdutil"
-	"github.com/gabe565/moreutils/internal/cmdutil/subcommands"
-	"github.com/gabe565/moreutils/internal/generate/seealsoreplacer"
-	"github.com/gabe565/moreutils/internal/util"
+	"gabe565.com/moreutils/cmd"
+	"gabe565.com/moreutils/cmd/ifdata"
+	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/moreutils/internal/cmdutil/subcommands"
+	"gabe565.com/moreutils/internal/generate/seealsoreplacer"
+	"gabe565.com/moreutils/internal/util"
 	"github.com/spf13/cobra/doc"
 )
 
