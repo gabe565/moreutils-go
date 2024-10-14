@@ -3,7 +3,7 @@
 [![Build](https://github.com/gabe565/moreutils-go/actions/workflows/build.yaml/badge.svg)](https://github.com/gabe565/moreutils-go/actions/workflows/build.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/gabe565/moreutils-go)](https://goreportcard.com/report/github.com/gabe565/moreutils-go)
 
-A Go rewrite of [moreutils](http://kitenet.net/~joey/code/moreutils/): A collection of the Unix tools that nobody thought to write long ago when Unix was young.
+A Go rewrite of [moreutils](https://kitenet.net/~joey/code/moreutils/): A collection of the Unix tools that nobody thought to write long ago when Unix was young.
 
 Some of the original moreutils commands require Perl, so I decided to rewrite them in a language which can compile into a single binary with no dependencies.
 
