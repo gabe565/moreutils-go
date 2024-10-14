@@ -29,8 +29,8 @@ func (l *LoadAvg) Update() error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	l.min1 = float64(load.load[0]) / scale
-	l.min5 = float64(load.load[1]) / scale
-	l.min15 = float64(load.load[2]) / scale
+	l.parts[0] = float64(load.load[0]) / scale
+	l.parts[1] = float64(load.load[1]) / scale
+	l.parts[2] = float64(load.load[2]) / scale
 	return nil
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -12,17 +14,23 @@ const (
 )
 
 func (l *LoadAvg) Update() error {
-	f, err := os.Open(path)
+	data, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}
-	defer func() {
-		_ = f.Close()
-	}()
+
+	parts := strings.Fields(string(data))
+	if len(parts) < 3 {
+		return fmt.Errorf("%w in %s: not enough values", ErrUnexpectedContent, path)
+	}
 
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	_, err = fmt.Fscanf(f, "%f %f %f", &l.min1, &l.min5, &l.min15)
-	return err
+	for i, load := range parts[0:3] {
+		if l.parts[i], err = strconv.ParseFloat(load, 64); err != nil {
+			return err
+		}
+	}
+	return nil
 }

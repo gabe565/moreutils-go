@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
+	"strings"
 )
 
 const Supported = true
@@ -14,14 +16,26 @@ const Supported = true
 func (l *LoadAvg) Update() error {
 	cmd := exec.Command("sysctl", "-n", "vm.loadavg")
 	cmd.Stderr = os.Stderr
-	stdout, err := cmd.Output()
+	data, err := cmd.Output()
 	if err != nil {
 		return err
+	}
+
+	data = bytes.TrimPrefix(data, []byte("{ "))
+	data = bytes.TrimSuffix(data, []byte(" }"))
+
+	parts := strings.Fields(string(data))
+	if len(parts) < 3 {
+		return fmt.Errorf("%w: not enough values", ErrUnexpectedContent)
 	}
 
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	_, err = fmt.Fscanf(bytes.NewReader(stdout), "{ %f %f %f }", &l.min1, &l.min5, &l.min15)
+	for i, load := range parts[0:3] {
+		if l.parts[i], err = strconv.ParseFloat(load, 64); err != nil {
+			return err
+		}
+	}
 	return err
 }

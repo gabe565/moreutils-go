@@ -8,13 +8,14 @@ import (
 	"time"
 )
 
-var ErrUnsupported = errors.New("loadavg: unsupported platform")
+var (
+	ErrUnsupported       = errors.New("loadavg: unsupported platform")
+	ErrUnexpectedContent = errors.New("loadavg: unexpected content")
+)
 
 type LoadAvg struct {
 	mu    sync.RWMutex
-	min1  float64
-	min5  float64
-	min15 float64
+	parts [3]float64
 }
 
 func New() *LoadAvg {
@@ -53,11 +54,11 @@ func (l *LoadAvg) Get(p GetParam) float64 {
 	defer l.mu.RUnlock()
 	switch p {
 	case Min1:
-		return l.min1
+		return l.parts[0]
 	case Min5:
-		return l.min5
+		return l.parts[1]
 	case Min15:
-		return l.min15
+		return l.parts[2]
 	default:
 		panic(fmt.Sprintf("unknown LoadAvg.Get param: %d", p))
 	}
