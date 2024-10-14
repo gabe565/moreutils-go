@@ -46,7 +46,11 @@ func All(opts ...cmdutil.Option) []*cobra.Command {
 }
 
 func DefaultExcludes() []string {
-	return []string{parallel.Name}
+	excludes := []string{parallel.Name}
+	if !errno.Supported {
+		excludes = append(excludes, errno.Name)
+	}
+	return excludes
 }
 
 func Without(excludes []string, opts ...cmdutil.Option) iter.Seq[*cobra.Command] {
