@@ -60,18 +60,18 @@ func (f formatter) description() string {
 		return `Prints "yes" or "no" if the interface exists or not`
 	case fmtAddress:
 		return "Prints the IP address of the interface"
-	case fmtNetmask:
-		return "Prints the netmask of the interface"
 	case fmtNetworkAddress:
 		return "Prints the network address of the interface"
+	case fmtNetmask:
+		return "Prints the netmask of the interface"
 	case fmtBroadcastAddress:
 		return "Prints the broadcast address of the interface"
 	case fmtMTU:
 		return "Prints the MTU of the interface"
 	case fmtFlags:
-		return "Prints the hardware address of the interface. Exit with a failure exit code if there is not hardware address for the given network interface"
-	case fmtHardwareAddress:
 		return "Prints the flags of the interface"
+	case fmtHardwareAddress:
+		return "Prints the hardware address of the interface. Exit with a failure exit code if there is not hardware address for the given network interface"
 	case fmtInputStatistics:
 		return "Prints all input statistics of the interface"
 	case fmtInputPackets:
@@ -88,25 +88,25 @@ func (f formatter) description() string {
 		return "Prints the number of compressed input packets"
 	case fmtInputMulticast:
 		return "Prints the number of input multicast packets"
-	case fmtInputBytesSecond:
-		return "Prints all output statistics of the interface"
 	case fmtOutputStatistics:
-		return "Prints the number of output packets"
+		return "Prints all output statistics of the interface"
 	case fmtOutputPackets:
-		return "Prints the number of output bytes"
+		return "Prints the number of output packets"
 	case fmtOutputBytes:
-		return "Prints the number of output errors"
+		return "Prints the number of output bytes"
 	case fmtOutputErrors:
-		return "Prints the number of dropped output packets"
+		return "Prints the number of output errors"
 	case fmtOutputDropped:
-		return "Prints the number of output fifo overruns"
+		return "Prints the number of dropped output packets"
 	case fmtOutputFIFO:
-		return "Prints the number of output collisions"
+		return "Prints the number of output fifo overruns"
 	case fmtOutputCollisions:
-		return "Prints the number of output carrier losses"
+		return "Prints the number of output collisions"
 	case fmtOutputCarrierLosses:
-		return "Prints the number of output multicast packets"
+		return "Prints the number of output carrier losses"
 	case fmtOutputMulticast:
+		return "Prints the number of output multicast packets"
+	case fmtInputBytesSecond:
 		return "Prints the number of bytes of incoming traffic measured in one second"
 	case fmtOutputBytesSecond:
 		return "Prints the number of bytes of outgoing traffic measured in one second"
