@@ -77,18 +77,14 @@ func run(cmd *cobra.Command, args []string) error {
 	var errs []error
 	for subCmd := range subcommands.Without(excludes) {
 		dst := path.Join(dst, subCmd.Name())
-		if err := link(symbolic, src, dst); err != nil {
-			if force {
-				if err := os.Remove(dst); err == nil {
-					if err := link(symbolic, src, dst); err != nil {
-						errs = append(errs, err)
-					}
-				} else {
-					errs = append(errs, err)
-				}
-			} else {
+		if force {
+			if err := os.Remove(dst); err != nil && !os.IsNotExist(err) {
 				errs = append(errs, err)
+				continue
 			}
+		}
+		if err := link(symbolic, src, dst); err != nil {
+			errs = append(errs, err)
 		}
 	}
 
