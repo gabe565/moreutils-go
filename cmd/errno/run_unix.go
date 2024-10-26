@@ -9,18 +9,18 @@ import (
 	"strings"
 
 	"gabe565.com/moreutils/internal/errno"
-	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
 
 const Supported = true
 
 func validArgs(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-	if util.Must2(cmd.Flags().GetBool(FlagList)) {
+	if must.Must2(cmd.Flags().GetBool(FlagList)) {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	search := util.Must2(cmd.Flags().GetBool(FlagSearch))
+	search := must.Must2(cmd.Flags().GetBool(FlagSearch))
 
 	var completions []string
 	for e := range errno.Iter() {
@@ -40,7 +40,7 @@ func validArgs(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellC
 func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
-	if util.Must2(cmd.Flags().GetBool(FlagList)) {
+	if must.Must2(cmd.Flags().GetBool(FlagList)) {
 		for e := range errno.Iter() {
 			if err := printErrno(cmd, e); err != nil {
 				return err
@@ -54,7 +54,7 @@ func run(cmd *cobra.Command, args []string) error {
 		return cobra.MinimumNArgs(1)(cmd, args)
 	}
 
-	if util.Must2(cmd.Flags().GetBool(FlagSearch)) {
+	if must.Must2(cmd.Flags().GetBool(FlagSearch)) {
 		search := strings.ToLower(strings.Join(args, " "))
 		for e := range errno.Iter() {
 			if strings.Contains(strings.ToLower(e.Error()), search) {

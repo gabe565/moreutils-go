@@ -13,7 +13,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/loadavg"
-	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
 )
@@ -71,10 +71,10 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	numArgs := util.Must2(cmd.Flags().GetInt(FlagNumArgs))
-	replace := util.Must2(cmd.Flags().GetBool(FlagReplace))
+	numArgs := must.Must2(cmd.Flags().GetInt(FlagNumArgs))
+	replace := must.Must2(cmd.Flags().GetBool(FlagReplace))
 
-	maxLoad := util.Must2(cmd.Flags().GetFloat64(FlagLoad))
+	maxLoad := must.Must2(cmd.Flags().GetFloat64(FlagLoad))
 	loadAvg := loadavg.New()
 
 	var group errgroup.Group
@@ -114,7 +114,7 @@ func buildCmd(args []string, arg []string, replace bool) []string {
 }
 
 func parseNumJobs(cmd *cobra.Command) (int, error) {
-	numJobsStr := util.Must2(cmd.Flags().GetString(FlagJobs))
+	numJobsStr := must.Must2(cmd.Flags().GetString(FlagJobs))
 	var jobs int
 	if strings.HasSuffix(numJobsStr, "%") {
 		pct, err := strconv.Atoi(strings.TrimSuffix(numJobsStr, "%"))

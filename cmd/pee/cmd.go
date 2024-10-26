@@ -10,6 +10,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
 
@@ -51,11 +52,11 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
-	if util.Must2(cmd.Flags().GetBool(FlagIgnoreSigpipe)) && !util.Must2(cmd.Flags().GetBool(FlagNoIgnoreSigpipe)) {
+	if must.Must2(cmd.Flags().GetBool(FlagIgnoreSigpipe)) && !must.Must2(cmd.Flags().GetBool(FlagNoIgnoreSigpipe)) {
 		signal.Ignore(syscall.SIGPIPE)
 	}
 
-	ignoreWriteErrs := util.Must2(cmd.Flags().GetBool(FlagIgnoreWriteErrors)) && !util.Must2(cmd.Flags().GetBool(FlagNoIgnoreWriteErrors))
+	ignoreWriteErrs := must.Must2(cmd.Flags().GetBool(FlagIgnoreWriteErrors)) && !must.Must2(cmd.Flags().GetBool(FlagNoIgnoreWriteErrors))
 
 	cmds := make([]*exec.Cmd, 0, len(args))
 	pipes := make([]io.Writer, 0, len(args))

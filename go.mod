@@ -2,12 +2,11 @@ module gabe565.com/moreutils
 
 go 1.23.2
 
-replace github.com/gravwell/gravwell/v3 => github.com/gabe565/gravwell/v3 v3.0.0-20240927080051-af89d2bfd634
-
 require (
+	gabe565.com/utils v0.0.0-20241022192425-24cf603062f3
 	github.com/dmarkham/enumer v1.5.10
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
-	github.com/gravwell/gravwell/v3 v3.8.40
+	github.com/gravwell/gravwell/v3 v3.8.44-0.20241017211901-2550a3009f7c
 	github.com/lestrrat-go/strftime v1.1.0
 	github.com/mattn/go-isatty v0.0.20
 	github.com/mattn/go-tty v0.0.7

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"gabe565.com/moreutils/internal/cmdutil/subcommands"
-	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
 
@@ -56,10 +56,10 @@ func run(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	force := util.Must2(cmd.Flags().GetBool(FlagForce))
-	symbolic := util.Must2(cmd.Flags().GetBool(FlagSymbolic))
+	force := must.Must2(cmd.Flags().GetBool(FlagForce))
+	symbolic := must.Must2(cmd.Flags().GetBool(FlagSymbolic))
 
-	if util.Must2(cmd.Flags().GetBool(FlagRelative)) {
+	if must.Must2(cmd.Flags().GetBool(FlagRelative)) {
 		dstAbs, err := filepath.Abs(dst)
 		if err != nil {
 			return err
@@ -73,7 +73,7 @@ func run(cmd *cobra.Command, args []string) error {
 		src = filepath.Join(relPath, filepath.Base(src))
 	}
 
-	excludes := util.Must2(cmd.Flags().GetStringSlice(FlagExclude))
+	excludes := must.Must2(cmd.Flags().GetStringSlice(FlagExclude))
 
 	var errs []error
 	for subCmd := range subcommands.Without(excludes) {

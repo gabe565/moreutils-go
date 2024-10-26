@@ -9,6 +9,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/gravwell/gravwell/v3/timegrinder"
 	"github.com/lestrrat-go/strftime"
 	"github.com/spf13/cobra"
@@ -56,7 +57,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 
 func validArgs(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 	var completions []string
-	if util.Must2(cmd.Flags().GetBool(FlagIncrement)) || util.Must2(cmd.Flags().GetBool(FlagSinceStart)) {
+	if must.Must2(cmd.Flags().GetBool(FlagIncrement)) || must.Must2(cmd.Flags().GetBool(FlagSinceStart)) {
 		completions = append(completions,
 			"%T",
 			"%.T",
@@ -88,11 +89,11 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 	cmd.SilenceUsage = true
 
-	increment := util.Must2(cmd.Flags().GetBool(FlagIncrement))
-	sinceStart := util.Must2(cmd.Flags().GetBool(FlagSinceStart))
-	relative := util.Must2(cmd.Flags().GetBool(FlagRelative))
-	parseLocal := util.Must2(cmd.Flags().GetBool(FlagLocal))
-	multiple := util.Must2(cmd.Flags().GetBool(FlagMultiple))
+	increment := must.Must2(cmd.Flags().GetBool(FlagIncrement))
+	sinceStart := must.Must2(cmd.Flags().GetBool(FlagSinceStart))
+	relative := must.Must2(cmd.Flags().GetBool(FlagRelative))
+	parseLocal := must.Must2(cmd.Flags().GetBool(FlagLocal))
+	multiple := must.Must2(cmd.Flags().GetBool(FlagMultiple))
 
 	format := "%Y-%m-%d %H:%M:%S"
 	switch {

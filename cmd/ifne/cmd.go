@@ -8,6 +8,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
 
@@ -42,7 +43,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 	cmd.SilenceUsage = true
 
-	invert := util.Must2(cmd.Flags().GetBool(FlagInvert))
+	invert := must.Must2(cmd.Flags().GetBool(FlagInvert))
 
 	r := bufio.NewReader(cmd.InOrStdin())
 	willRun, err := shouldRun(r, invert)

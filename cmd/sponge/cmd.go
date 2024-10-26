@@ -7,6 +7,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
 
@@ -69,7 +70,7 @@ func run(cmd *cobra.Command, args []string) error {
 		out = tmp
 	}
 
-	if util.Must2(cmd.Flags().GetBool(FlagAppend)) {
+	if must.Must2(cmd.Flags().GetBool(FlagAppend)) {
 		if in, err := os.Open(args[0]); err != nil {
 			if !os.IsNotExist(err) {
 				return err

@@ -8,6 +8,7 @@ import (
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/editor"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +39,7 @@ func New(opts ...cmdutil.Option) *cobra.Command {
 func run(cmd *cobra.Command, _ []string) error {
 	cmd.SilenceUsage = true
 
-	suffix := util.Must2(cmd.Flags().GetString(FlagSuffix))
+	suffix := must.Must2(cmd.Flags().GetString(FlagSuffix))
 	if suffix != "" && !strings.HasPrefix(suffix, ".") {
 		suffix = "." + suffix
 	}
