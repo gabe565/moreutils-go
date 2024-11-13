@@ -10,6 +10,7 @@ import (
 	"gabe565.com/moreutils/internal/seekbuf"
 	"gabe565.com/moreutils/internal/util"
 	"gabe565.com/utils/cobrax"
+	"gabe565.com/utils/termx"
 	"github.com/spf13/cobra"
 )
 
@@ -44,7 +45,7 @@ func validArgs(_ *cobra.Command, args []string, _ string) ([]string, cobra.Shell
 var ErrBothFilesStdin = errors.New("both files are stdin")
 
 func run(cmd *cobra.Command, args []string) error {
-	if (args[0] == "-" || args[2] == "-") && util.IsTerminal(cmd.InOrStdin()) {
+	if (args[0] == "-" || args[2] == "-") && termx.IsTerminal(cmd.InOrStdin()) {
 		return util.ErrNotAPipe
 	}
 

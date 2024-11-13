@@ -10,6 +10,7 @@ import (
 	"gabe565.com/moreutils/internal/util"
 	"gabe565.com/utils/cobrax"
 	"gabe565.com/utils/must"
+	"gabe565.com/utils/termx"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +40,7 @@ func New(opts ...cobrax.Option) *cobra.Command {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	if util.IsTerminal(cmd.InOrStdin()) {
+	if termx.IsTerminal(cmd.InOrStdin()) {
 		return util.ErrNotAPipe
 	}
 	cmd.SilenceUsage = true

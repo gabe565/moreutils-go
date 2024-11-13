@@ -9,8 +9,8 @@ import (
 	"unicode/utf8"
 
 	"gabe565.com/moreutils/internal/cmdutil"
-	"gabe565.com/moreutils/internal/util"
 	"gabe565.com/utils/cobrax"
+	"gabe565.com/utils/termx"
 	"github.com/spf13/cobra"
 )
 
@@ -42,7 +42,7 @@ func run(cmd *cobra.Command, args []string) error {
 	var notAllUTF8 bool
 	var errs []error
 	if len(args) == 0 {
-		if util.IsTerminal(cmd.InOrStdin()) {
+		if termx.IsTerminal(cmd.InOrStdin()) {
 			return cmd.Help()
 		}
 

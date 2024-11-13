@@ -7,9 +7,9 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/editor"
-	"gabe565.com/moreutils/internal/util"
 	"gabe565.com/utils/cobrax"
 	"gabe565.com/utils/must"
+	"gabe565.com/utils/termx"
 	"github.com/spf13/cobra"
 )
 
@@ -54,7 +54,7 @@ func run(cmd *cobra.Command, _ []string) error {
 		_ = os.Remove(tmp.Name())
 	}()
 
-	if !util.IsTerminal(cmd.InOrStdin()) {
+	if !termx.IsTerminal(cmd.InOrStdin()) {
 		if _, err := io.Copy(tmp, cmd.InOrStdin()); err != nil {
 			return err
 		}
