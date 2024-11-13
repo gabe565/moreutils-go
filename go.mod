@@ -6,7 +6,7 @@ require (
 	gabe565.com/utils v0.0.0-20241022192425-24cf603062f3
 	github.com/dmarkham/enumer v1.5.10
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
-	github.com/gravwell/gravwell/v3 v3.8.44
+	github.com/gravwell/gravwell/v3 v3.8.49
 	github.com/lestrrat-go/strftime v1.1.0
 	github.com/mattn/go-isatty v0.0.20
 	github.com/mattn/go-tty v0.0.7
