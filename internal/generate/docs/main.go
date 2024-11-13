@@ -11,10 +11,10 @@ import (
 
 	"gabe565.com/moreutils/cmd"
 	"gabe565.com/moreutils/cmd/ifdata"
-	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/cmdutil/subcommands"
 	"gabe565.com/moreutils/internal/generate/seealsoreplacer"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/cobrax"
 	"github.com/spf13/cobra/doc"
 )
 
@@ -34,7 +34,7 @@ func main() {
 		panic(err)
 	}
 
-	opts := []cmdutil.Option{cmdutil.WithVersion("beta")}
+	opts := []cobrax.Option{cobrax.WithVersion("beta")}
 	root := cmd.New(cmd.Name, opts...)
 	cmds := append(slices.Collect(subcommands.Without(nil, opts...)), root)
 	for _, subCmd := range root.Commands() {

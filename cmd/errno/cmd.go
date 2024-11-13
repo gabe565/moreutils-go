@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/utils/cobrax"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +19,7 @@ var (
 	ErrUnknown   = errors.New("unknown err name")
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " { name | code }",
 		Short:   "Look up errno names and descriptions",

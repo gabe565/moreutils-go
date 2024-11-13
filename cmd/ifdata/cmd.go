@@ -11,12 +11,13 @@ import (
 	"strings"
 
 	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/utils/cobrax"
 	"github.com/spf13/cobra"
 )
 
 const Name = "ifdata"
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " [flags] interface",
 		Short:   "Get network interface info without parsing ifconfig output",

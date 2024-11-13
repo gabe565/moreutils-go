@@ -9,6 +9,7 @@ import (
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/seekbuf"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/cobrax"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +18,7 @@ const (
 	Alias = "_"
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " file operator file",
 		Short:   "Combine sets of lines from two files using boolean operations",

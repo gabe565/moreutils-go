@@ -8,6 +8,7 @@ import (
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/editor"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/cobrax"
 	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
@@ -17,7 +18,7 @@ const (
 	FlagSuffix = "suffix"
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name,
 		Short:   "Insert a text editor into a pipe",

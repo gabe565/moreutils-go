@@ -7,6 +7,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/cobrax"
 	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
@@ -16,7 +17,7 @@ const (
 	FlagAppend = "append"
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " file",
 		Short:   "Soak up standard input and write to a file",

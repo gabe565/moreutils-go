@@ -22,11 +22,11 @@ import (
 	"gabe565.com/moreutils/cmd/vidir"
 	"gabe565.com/moreutils/cmd/vipe"
 	"gabe565.com/moreutils/cmd/zrun"
-	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/utils/cobrax"
 	"github.com/spf13/cobra"
 )
 
-func All(opts ...cmdutil.Option) []*cobra.Command {
+func All(opts ...cobrax.Option) []*cobra.Command {
 	return []*cobra.Command{
 		chronic.New(opts...),
 		combine.New(opts...),
@@ -53,7 +53,7 @@ func DefaultExcludes() []string {
 	return excludes
 }
 
-func Without(excludes []string, opts ...cmdutil.Option) iter.Seq[*cobra.Command] {
+func Without(excludes []string, opts ...cobrax.Option) iter.Seq[*cobra.Command] {
 	if len(excludes) == 0 {
 		excludes = DefaultExcludes()
 	}
@@ -70,7 +70,7 @@ func Without(excludes []string, opts ...cmdutil.Option) iter.Seq[*cobra.Command]
 
 var ErrUnknownCommand = errors.New("unknown command")
 
-func Choose(name string, opts ...cmdutil.Option) (*cobra.Command, error) {
+func Choose(name string, opts ...cobrax.Option) (*cobra.Command, error) {
 	base := filepath.Base(name)
 	switch base {
 	case chronic.Name:

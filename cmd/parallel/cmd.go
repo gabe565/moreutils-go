@@ -13,6 +13,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/loadavg"
+	"gabe565.com/utils/cobrax"
 	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/errgroup"
@@ -26,7 +27,7 @@ const (
 	FlagNumArgs = "num-args"
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " [flags] command -- arg...",
 		Short:   "Run multiple jobs at once",

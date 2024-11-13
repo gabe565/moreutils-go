@@ -10,6 +10,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/cobrax"
 	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
@@ -23,7 +24,7 @@ const (
 	FlagNoIgnoreWriteErrors = "no-ignore-write-errors"
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " command...",
 		Short:   "Tee standard input to pipes",

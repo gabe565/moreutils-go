@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/utils/cobrax"
 	"github.com/spf13/cobra"
 )
 
@@ -19,7 +20,7 @@ const (
 	Prefix = "z"
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " command args",
 		Short:   "Automatically decompress arguments to command",

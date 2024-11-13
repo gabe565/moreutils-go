@@ -14,6 +14,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/editor"
+	"gabe565.com/utils/cobrax"
 	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
@@ -24,7 +25,7 @@ const (
 	FlagRecursive = "recursive"
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " [file | dir]...",
 		Short:   "Edit a directory in your text editor",

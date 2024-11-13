@@ -8,6 +8,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/execbuf"
+	"gabe565.com/utils/cobrax"
 	"gabe565.com/utils/must"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +19,7 @@ const (
 	FlagVerbose = "verbose"
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " [flags] command",
 		Short:   "Runs a command quietly unless it fails",

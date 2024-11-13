@@ -4,12 +4,13 @@ import (
 	"os/exec"
 
 	"gabe565.com/moreutils/internal/cmdutil"
+	"gabe565.com/utils/cobrax"
 	"github.com/spf13/cobra"
 )
 
 const Name = "mispipe"
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " command command",
 		Short:   "Pipe two commands, returning the exit status of the first",

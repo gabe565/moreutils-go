@@ -9,6 +9,7 @@ import (
 
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/util"
+	"gabe565.com/utils/cobrax"
 	"gabe565.com/utils/must"
 	"github.com/gravwell/gravwell/v3/timegrinder"
 	"github.com/lestrrat-go/strftime"
@@ -25,7 +26,7 @@ const (
 	FlagMultiple   = "multiple"
 )
 
-func New(opts ...cmdutil.Option) *cobra.Command {
+func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     Name + " [format]",
 		Short:   "Timestamp standard input",

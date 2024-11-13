@@ -4,12 +4,13 @@ import (
 	"gabe565.com/moreutils/cmd/install"
 	"gabe565.com/moreutils/internal/cmdutil"
 	"gabe565.com/moreutils/internal/cmdutil/subcommands"
+	"gabe565.com/utils/cobrax"
 	"github.com/spf13/cobra"
 )
 
 const Name = "moreutils"
 
-func New(name string, opts ...cmdutil.Option) *cobra.Command {
+func New(name string, opts ...cobrax.Option) *cobra.Command {
 	if name != Name {
 		if cmd, err := subcommands.Choose(name, opts...); err == nil {
 			return cmd
