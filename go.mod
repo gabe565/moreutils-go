@@ -3,7 +3,7 @@ module gabe565.com/moreutils
 go 1.23.3
 
 require (
-	gabe565.com/utils v0.0.0-20241113234659-bc897536fe4b
+	gabe565.com/utils v0.0.0-20241116061915-abe2278ecd5c
 	github.com/dmarkham/enumer v1.5.10
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/gravwell/gravwell/v3 v3.8.49
