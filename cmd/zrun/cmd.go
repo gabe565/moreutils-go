@@ -58,11 +58,11 @@ func run(cmd *cobra.Command, args []string) error {
 
 		if getAlgorithm(arg) != algoUnknown {
 			arg, err := decompressTmp(cmd, arg)
-			defer func() {
-				if arg != "" {
+			if arg != "" {
+				defer func() {
 					_ = os.Remove(arg)
-				}
-			}()
+				}()
+			}
 			if err != nil {
 				return err
 			}
