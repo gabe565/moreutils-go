@@ -85,6 +85,7 @@ const (
 	algoGZIP
 	algoBZIP2
 	algoXZ
+	algoZSTD
 	algoLZMA
 	algoLZOP
 )
@@ -98,6 +99,8 @@ func getAlgorithm(arg string) algorithm {
 		return algoBZIP2
 	case strings.EqualFold(ext, ".xz"):
 		return algoXZ
+	case strings.EqualFold(ext, ".zst"):
+		return algoZSTD
 	case strings.EqualFold(ext, ".lzma"):
 		return algoLZMA
 	case strings.EqualFold(ext, ".lzo"):
@@ -150,6 +153,8 @@ func decompressTmp(cmd *cobra.Command, path string) (string, error) {
 			args = []string{"bzip2", "-d", "-c"}
 		case algoXZ:
 			args = []string{"xz", "-d", "-c"}
+		case algoZSTD:
+			args = []string{"zstd", "-d", "-c"}
 		case algoLZMA:
 			args = []string{"lzma", "-d", "-c"}
 		case algoLZOP:
