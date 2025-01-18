@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"math"
 	"os"
 	"path/filepath"
 	"slices"
@@ -157,9 +158,7 @@ func createListing(w io.Writer, args []string, recursive bool) ([]string, error)
 	}
 
 	paths := make([]string, 0, len(args))
-
 	buf := bufio.NewWriter(w)
-	var i int
 	for _, arg := range args {
 		glob, err := filepath.Glob(arg)
 		if err != nil {
@@ -168,17 +167,7 @@ func createListing(w io.Writer, args []string, recursive bool) ([]string, error)
 
 		for _, globPath := range glob {
 			if err := filepath.WalkDir(globPath, func(path string, d fs.DirEntry, err error) error {
-				if err != nil {
-					return err
-				}
-
-				if d.IsDir() && path == globPath {
-					// Only show files when a directory is passed as a param
-					return nil
-				}
-
-				i++
-				if _, err := buf.WriteString(fmt.Sprintf("%04d\t%s\n", i, path)); err != nil {
+				if err != nil || (path == globPath && d.IsDir()) {
 					return err
 				}
 
@@ -192,6 +181,13 @@ func createListing(w io.Writer, args []string, recursive bool) ([]string, error)
 			}); err != nil {
 				return nil, err
 			}
+		}
+	}
+
+	pad := strconv.FormatInt(int64(math.Log10(float64(len(paths)))+1), 10)
+	for i, path := range paths {
+		if _, err := buf.WriteString(fmt.Sprintf("%0"+pad+"d\t%s\n", i+1, path)); err != nil {
+			return nil, err
 		}
 	}
 
