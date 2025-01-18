@@ -1,6 +1,6 @@
 module gabe565.com/moreutils
 
-go 1.23.3
+go 1.23.5
 
 require (
 	gabe565.com/utils v0.0.0-20241113234659-bc897536fe4b
