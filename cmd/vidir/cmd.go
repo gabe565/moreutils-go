@@ -173,7 +173,7 @@ func createListing(w io.Writer, args []string, recursive bool) ([]string, error)
 
 				paths = append(paths, path)
 
-				if !recursive && d.IsDir() && !slices.Contains(args, path) {
+				if !recursive && d.IsDir() {
 					// Do not recurse more than 1 level
 					return filepath.SkipDir
 				}
