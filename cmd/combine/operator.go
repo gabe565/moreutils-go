@@ -37,16 +37,23 @@ func (op operator) compare(out io.Writer, r1, r2 io.ReadSeeker) error {
 
 // compareOr outputs lines from both r1 and r2
 func compareOr(out io.Writer, r1, r2 io.Reader) error {
-	return errors.Join(
-		iterLines(r1, func(line string) error {
-			_, err := fmt.Fprintln(out, line)
+	for line, err := range iterLines(r1) {
+		if err != nil {
 			return err
-		}),
-		iterLines(r2, func(line string) error {
-			_, err := fmt.Fprintln(out, line)
+		}
+		if _, err := fmt.Fprintln(out, line); err != nil {
 			return err
-		}),
-	)
+		}
+	}
+	for line, err := range iterLines(r2) {
+		if err != nil {
+			return err
+		}
+		if _, err := fmt.Fprintln(out, line); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // compareXor outputs lines that are in r1 or r2, but not in both
@@ -77,13 +84,17 @@ func compareNot(out io.Writer, r1, r2 io.Reader) error {
 		return err
 	}
 
-	return iterLines(r1, func(line string) error {
-		if _, exists := seen[line]; !exists {
-			_, err := fmt.Fprintln(out, line)
+	for line, err := range iterLines(r1) {
+		if err != nil {
 			return err
 		}
-		return nil
-	})
+		if _, exists := seen[line]; !exists {
+			if _, err := fmt.Fprintln(out, line); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 // compareAnd outputs lines that are in both r1 and r2
@@ -93,11 +104,15 @@ func compareAnd(out io.Writer, r1, r2 io.Reader) error {
 		return err
 	}
 
-	return iterLines(r1, func(line string) error {
-		if _, exists := seen[line]; exists {
-			_, err := fmt.Fprintln(out, line)
+	for line, err := range iterLines(r1) {
+		if err != nil {
 			return err
 		}
-		return nil
-	})
+		if _, exists := seen[line]; exists {
+			if _, err := fmt.Fprintln(out, line); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
