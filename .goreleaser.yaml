@@ -66,8 +66,11 @@ changelog:
     - title: Fixes
       order: 1
       regexp: "(fix|perf)"
-    - title: Others
+    - title: Dependencies
       order: 999
+      regexp: '\(deps\):'
+    - title: Others
+      order: 998
 brews:
   - homepage: https://github.com/gabe565/moreutils
     description: "A Go rewrite of moreutils: A collection of the Unix tools that nobody thought to write long ago when Unix was young."
