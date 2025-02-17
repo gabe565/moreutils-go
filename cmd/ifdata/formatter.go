@@ -126,7 +126,7 @@ func (f formatter) Sprint(iface *net.Interface) (string, error) {
 	case fmtMTU:
 		return strconv.Itoa(iface.MTU), nil
 	case fmtFlags:
-		return strings.Join(strings.Split(iface.Flags.String(), "|"), "\n"), nil
+		return strings.ReplaceAll(iface.Flags.String(), "|", "\n"), nil
 	case fmtHardwareAddress:
 		return strings.ToUpper(iface.HardwareAddr.String()), nil
 	case fmtAddress, fmtNetmask, fmtNetworkAddress, fmtBroadcastAddress, fmtPrint:
