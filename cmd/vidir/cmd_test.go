@@ -26,13 +26,7 @@ func tempFile(t *testing.T, dir string, name string) {
 
 func TestRun(t *testing.T) {
 	temp := t.TempDir()
-
-	wd, err := os.Getwd()
-	require.NoError(t, err)
-	t.Cleanup(func() {
-		require.NoError(t, os.Chdir(wd))
-	})
-	require.NoError(t, os.Chdir(temp))
+	t.Chdir(temp)
 
 	tempFile(t, temp, "a")
 	tempFile(t, temp, "b")

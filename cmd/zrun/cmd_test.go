@@ -16,12 +16,8 @@ func tempFile(t *testing.T, compress bool, content string) string {
 	if compress {
 		path += ".gz"
 	}
-	temp, err := os.CreateTemp("", path)
+	temp, err := os.CreateTemp(t.TempDir(), path)
 	require.NoError(t, err)
-	t.Cleanup(func() {
-		_ = temp.Close()
-		_ = os.Remove(temp.Name())
-	})
 
 	w := io.WriteCloser(temp)
 	if compress {

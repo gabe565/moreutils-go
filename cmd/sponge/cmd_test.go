@@ -10,12 +10,8 @@ import (
 )
 
 func tempFile(t *testing.T, content string) string {
-	temp, err := os.CreateTemp("", "sponge-test-*.txt")
+	temp, err := os.CreateTemp(t.TempDir(), "sponge-test-*.txt")
 	require.NoError(t, err)
-	t.Cleanup(func() {
-		_ = temp.Close()
-		_ = os.Remove(temp.Name())
-	})
 
 	_, err = temp.WriteString(content)
 	require.NoError(t, err)
