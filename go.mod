@@ -4,7 +4,6 @@ go 1.24.0
 
 require (
 	gabe565.com/utils v0.0.0-20250217005250-f306fa7738cd
-	github.com/dmarkham/enumer v1.5.10
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/gravwell/gravwell/v3 v3.8.56
 	github.com/lestrrat-go/strftime v1.1.0
@@ -21,6 +20,7 @@ require (
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dmarkham/enumer v1.5.11 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/pascaldekloe/name v1.0.0 // indirect
@@ -30,3 +30,5 @@ require (
 	golang.org/x/tools v0.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+tool github.com/dmarkham/enumer

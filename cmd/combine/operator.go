@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-//go:generate go run github.com/dmarkham/enumer -type operator -trimprefix operator -transform lower -output operator_string.go
+//go:generate go tool enumer -type operator -trimprefix operator -transform lower -output operator_string.go
 
 type operator uint8
 

@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-//go:generate go run github.com/dmarkham/enumer -type formatter -linecomment -output formatter_string.go
+//go:generate go tool enumer -type formatter -linecomment -output formatter_string.go
 
 type formatter uint8
 
