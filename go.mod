@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	gabe565.com/utils v0.0.0-20250217005250-f306fa7738cd
-	github.com/dmarkham/enumer v1.5.10
+	github.com/dmarkham/enumer v1.5.11
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/gravwell/gravwell/v3 v3.8.56
 	github.com/lestrrat-go/strftime v1.1.0
