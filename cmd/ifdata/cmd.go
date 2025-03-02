@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"errors"
 	"fmt"
-	"html/template"
 	"io"
 	"net"
 	"slices"
@@ -94,12 +93,8 @@ func run(cmd *cobra.Command, args []string) error {
 			return cmd.Help()
 		case arg == "-v", arg == "--version":
 			if cmd.Version != "" {
-				tmpl, err := template.New("").Parse(cmd.VersionTemplate())
-				if err != nil {
-					panic(err)
-				}
-
-				return tmpl.Execute(cmd.OutOrStdout(), cmd)
+				_, err := io.WriteString(cmd.OutOrStdout(), cmd.DisplayName()+" version "+cmd.Version+"\n")
+				return err
 			}
 		case strings.HasPrefix(arg, "-"):
 			var err error

@@ -2,6 +2,7 @@ package ifdata
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -31,26 +32,20 @@ func UsageString(cmd *cobra.Command, full bool) string {
 }
 
 func usageFunc(cmd *cobra.Command) error {
-	tmpl := cmd.UsageTemplate()
+	cmd.SetUsageFunc(nil)
+	u := cmd.UsageString()
+	cmd.SetUsageFunc(usageFunc)
 
 	const flags = "Flags:"
-	flagsIdx := strings.Index(tmpl, flags)
+	flagsIdx := strings.Index(u, flags)
 	if flagsIdx == -1 {
 		panic("Missing usage flag start index")
 	}
 	flagsIdx += len(flags)
 
-	const end = "{{end}}"
-	endIdx := strings.Index(tmpl[flagsIdx:], end)
-	if endIdx == -1 {
-		panic("Missing usage flag end index")
-	}
-	endIdx += flagsIdx
-
-	tmpl = tmpl[:flagsIdx] + UsageString(cmd, false) + tmpl[endIdx:]
-	cmd.SetUsageTemplate(tmpl)
-	cmd.SetUsageFunc(nil)
-	return cmd.Usage()
+	u = u[:flagsIdx] + UsageString(cmd, false) + "\n"
+	_, err := io.WriteString(cmd.OutOrStdout(), u)
+	return err
 }
 
 func ManOptions() string {
