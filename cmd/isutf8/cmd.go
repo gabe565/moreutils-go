@@ -43,7 +43,7 @@ func run(cmd *cobra.Command, args []string) error {
 	var errs []error
 	if len(args) == 0 {
 		if termx.IsTerminal(cmd.InOrStdin()) {
-			return cmd.Help()
+			return cmd.Usage()
 		}
 
 		if err := checkReader(cmd, "(standard input)", cmd.InOrStdin()); err != nil {
