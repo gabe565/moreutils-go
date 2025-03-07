@@ -5,7 +5,7 @@ go 1.24.0
 require (
 	gabe565.com/utils v0.0.0-20250302063333-ede73b14282c
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
-	github.com/gravwell/gravwell/v3 v3.8.56
+	github.com/gravwell/gravwell/v3 v3.8.59
 	github.com/lestrrat-go/strftime v1.1.0
 	github.com/mattn/go-tty v0.0.7
 	github.com/prometheus/procfs v0.15.1
