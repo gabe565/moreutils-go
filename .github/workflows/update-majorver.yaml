@@ -12,4 +12,4 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: nowactions/update-majorver@v1
+      - uses: nowactions/update-majorver@f2014bbbba95b635e990ce512c5653bd0f4753fb # v1.1.2
