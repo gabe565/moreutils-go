@@ -8,13 +8,13 @@ require (
 	github.com/gravwell/gravwell/v3 v3.8.56
 	github.com/lestrrat-go/strftime v1.1.0
 	github.com/mattn/go-tty v0.0.7
-	github.com/prometheus/procfs v0.15.1
+	github.com/prometheus/procfs v0.17.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7
-	golang.org/x/sync v0.11.0
-	golang.org/x/sys v0.30.0
+	golang.org/x/sync v0.15.0
+	golang.org/x/sys v0.33.0
 )
 
 require (
