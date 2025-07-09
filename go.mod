@@ -13,7 +13,7 @@ require (
 	github.com/spf13/pflag v1.0.6
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7
-	golang.org/x/sync v0.11.0
+	golang.org/x/sync v0.16.0
 	golang.org/x/sys v0.30.0
 )
 
