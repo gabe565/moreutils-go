@@ -157,7 +157,7 @@ CMD echo hello world | ts
 
 ## Differences
 
-My goal is 100% compatability, but there are currently some differences compared to moreutils:
+My goal is 100% compatibility, but there are currently some differences compared to moreutils:
 
 | Applet       | Differences                                                                                                                                                                                                                                             |
 |--------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
