@@ -10,7 +10,7 @@ require (
 	github.com/mattn/go-tty v0.0.7
 	github.com/prometheus/procfs v0.15.1
 	github.com/spf13/cobra v1.9.1
-	github.com/spf13/pflag v1.0.6
+	github.com/spf13/pflag v1.0.10
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/exp v0.0.0-20250228200357-dead58393ab7
 	golang.org/x/sync v0.11.0
