@@ -1,6 +1,7 @@
 package vipe
 
 import (
+	"os"
 	"runtime"
 	"strings"
 	"testing"
@@ -18,6 +19,13 @@ func TestVipe(t *testing.T) {
 		sed = "sed -i 's/test/testing/'"
 	}
 
+	tmp, err := os.CreateTemp(t.TempDir(), "ts-test-*.txt")
+	require.NoError(t, err)
+
+	_, err = tmp.WriteString("test\n")
+	require.NoError(t, err)
+	require.NoError(t, tmp.Close())
+
 	tests := []struct {
 		name     string
 		editor   string
@@ -29,6 +37,7 @@ func TestVipe(t *testing.T) {
 	}{
 		{"run", sed, nil, "test\n", "testing\n", false, require.NoError},
 		{"suffix", `sh -c 'echo "$0" >"$0"'`, []string{"--suffix=bin"}, "", ".*.bin\n", true, require.NoError},
+		{"file", sed, []string{tmp.Name()}, "", "testing\n", true, require.NoError},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

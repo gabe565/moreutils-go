@@ -3,14 +3,14 @@
 Insert a text editor into a pipe
 
 ```
-vipe [flags]
+vipe [file] [flags]
 ```
 
 ### Options
 
 ```
   -h, --help            help for vipe
-  -s, --suffix string   Provides a file extension to the temp file generated (default "txt")
+  -s, --suffix string   File extension to use for the temp buffer file (default "txt")
   -v, --version         version for vipe
 ```
 

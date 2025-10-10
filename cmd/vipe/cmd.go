@@ -3,6 +3,7 @@ package vipe
 import (
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"gabe565.com/moreutils/internal/cmdutil"
@@ -20,16 +21,14 @@ const (
 
 func New(opts ...cobrax.Option) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     Name,
+		Use:     Name + " [file]",
 		Short:   "Insert a text editor into a pipe",
-		Args:    cobra.NoArgs,
+		Args:    cobra.MaximumNArgs(1),
 		RunE:    run,
 		GroupID: cmdutil.Applet,
-
-		ValidArgsFunction: cobra.NoFileCompletions,
 	}
 
-	cmd.Flags().StringP(FlagSuffix, "s", "txt", "Provides a file extension to the temp file generated")
+	cmd.Flags().StringP(FlagSuffix, "s", "txt", "File extension to use for the temp buffer file")
 
 	for _, opt := range opts {
 		opt(cmd)
@@ -37,10 +36,17 @@ func New(opts ...cobrax.Option) *cobra.Command {
 	return cmd
 }
 
-func run(cmd *cobra.Command, _ []string) error {
+func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
 	suffix := must.Must2(cmd.Flags().GetString(FlagSuffix))
+
+	if len(args) != 0 && !cmd.Flags().Changed(FlagSuffix) {
+		if v := filepath.Ext(args[0]); v != "" {
+			suffix = v
+		}
+	}
+
 	if suffix != "" && !strings.HasPrefix(suffix, ".") {
 		suffix = "." + suffix
 	}
@@ -54,7 +60,20 @@ func run(cmd *cobra.Command, _ []string) error {
 		_ = os.Remove(tmp.Name())
 	}()
 
-	if !termx.IsTerminal(cmd.InOrStdin()) {
+	switch {
+	case len(args) != 0:
+		f, err := os.Open(args[0])
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(tmp, f)
+		_ = f.Close()
+
+		if err != nil {
+			return err
+		}
+	case !termx.IsTerminal(cmd.InOrStdin()):
 		if _, err := io.Copy(tmp, cmd.InOrStdin()); err != nil {
 			return err
 		}
