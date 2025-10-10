@@ -28,7 +28,7 @@ func TestTs(t *testing.T) {
 			`[A-Z][a-z]{2} [\d ]\d \d{2}:\d{2}:\d{2}` + " test\n",
 			require.NoError,
 		},
-		{"invalid format", []string{"%g"}, "test\n", "", require.Error},
+		{"invalid format", []string{"%"}, "test\n", "", require.Error},
 		{
 			"relative",
 			[]string{"-r"},
