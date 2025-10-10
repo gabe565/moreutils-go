@@ -35,7 +35,7 @@ func (op operator) compare(out io.Writer, r1, r2 io.ReadSeeker) error {
 	}
 }
 
-// compareOr outputs lines from both r1 and r2
+// compareOr outputs lines from both r1 and r2.
 func compareOr(out io.Writer, r1, r2 io.Reader) error {
 	for line, err := range iterLines(r1) {
 		if err != nil {
@@ -56,7 +56,7 @@ func compareOr(out io.Writer, r1, r2 io.Reader) error {
 	return nil
 }
 
-// compareXor outputs lines that are in r1 or r2, but not in both
+// compareXor outputs lines that are in r1 or r2, but not in both.
 func compareXor(out io.Writer, r1, r2 io.ReadSeeker) error {
 	if err := compareNot(out, r1, r2); err != nil {
 		return err
@@ -77,7 +77,7 @@ func compareXor(out io.Writer, r1, r2 io.ReadSeeker) error {
 	return nil
 }
 
-// compareNot outputs lines from r1 that are not in r2
+// compareNot outputs lines from r1 that are not in r2.
 func compareNot(out io.Writer, r1, r2 io.Reader) error {
 	seen, err := collectLines(r2)
 	if err != nil {
@@ -97,7 +97,7 @@ func compareNot(out io.Writer, r1, r2 io.Reader) error {
 	return nil
 }
 
-// compareAnd outputs lines that are in both r1 and r2
+// compareAnd outputs lines that are in both r1 and r2.
 func compareAnd(out io.Writer, r1, r2 io.Reader) error {
 	seen, err := collectLines(r2)
 	if err != nil {

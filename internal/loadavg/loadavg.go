@@ -24,7 +24,7 @@ func New() *LoadAvg {
 
 func (l *LoadAvg) WaitBelow(ctx context.Context, want float64, interval time.Duration) error {
 	for {
-		if err := l.Update(); err != nil {
+		if err := l.Update(ctx); err != nil {
 			return err
 		}
 

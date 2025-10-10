@@ -43,7 +43,9 @@ func New(opts ...cobrax.Option) *cobra.Command {
 	cmd.Flags().BoolP(FlagSinceStart, "s", false, "Timestamps will be the time elapsed since start of the program")
 	cmd.Flags().BoolP(FlagRelative, "r", false, "Convert existing timestamps from stdin to relative times")
 	cmd.Flags().BoolP(FlagLocal, "l", false, "Parse to relative using local timezone instead of UTC")
-	cmd.Flags().Bool(FlagMultiple, false, "Search lines for multiple timestamps when converting to relative. This is slower than the default behavior.")
+	cmd.Flags().Bool(FlagMultiple, false,
+		"Search lines for multiple timestamps when converting to relative. This is slower than the default behavior.",
+	)
 	if err := cmd.Flags().MarkHidden(FlagMonotonic); err != nil {
 		panic(err)
 	}

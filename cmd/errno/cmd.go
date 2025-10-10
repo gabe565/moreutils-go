@@ -31,7 +31,9 @@ func New(opts ...cobrax.Option) *cobra.Command {
 	}
 
 	cmd.Flags().BoolP(FlagList, "l", false, "List all errno values")
-	cmd.Flags().BoolP(FlagSearch, "s", false, "Search for errors whose description contains all the given words (case-insensitive)")
+	cmd.Flags().BoolP(FlagSearch, "s", false,
+		"Search for errors whose description contains all the given words (case-insensitive)",
+	)
 
 	for _, opt := range opts {
 		opt(cmd)

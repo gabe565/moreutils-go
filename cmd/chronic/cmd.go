@@ -32,7 +32,9 @@ func New(opts ...cobrax.Option) *cobra.Command {
 
 	cmd.Flags().SetInterspersed(false)
 	cmd.Flags().BoolP(FlagStderr, "e", false, "Triggers output when stderr output length is non-zero")
-	cmd.Flags().BoolP(FlagVerbose, "v", false, "Verbose output (distinguishes between STDOUT and STDERR, also reports RETVAL)")
+	cmd.Flags().BoolP(FlagVerbose, "v", false,
+		"Verbose output (distinguishes between STDOUT and STDERR, also reports RETVAL)",
+	)
 
 	for _, opt := range opts {
 		opt(cmd)
@@ -46,7 +48,7 @@ func run(cmd *cobra.Command, args []string) error {
 	onStderr := must.Must2(cmd.Flags().GetBool(FlagStderr))
 	verbose := must.Must2(cmd.Flags().GetBool(FlagVerbose))
 
-	e := exec.Command(args[0], args[1:]...)
+	e := exec.CommandContext(cmd.Context(), args[0], args[1:]...)
 	e.Stdin = cmd.InOrStdin()
 
 	buf, err := execbuf.RunBuffered(e, cmd.OutOrStdout(), cmd.ErrOrStderr())

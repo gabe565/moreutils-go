@@ -4,6 +4,7 @@ package loadavg
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -13,8 +14,8 @@ import (
 
 const Supported = true
 
-func (l *LoadAvg) Update() error {
-	cmd := exec.Command("sysctl", "-n", "vm.loadavg")
+func (l *LoadAvg) Update(ctx context.Context) error {
+	cmd := exec.CommandContext(ctx, "sysctl", "-n", "vm.loadavg")
 	cmd.Stderr = os.Stderr
 	data, err := cmd.Output()
 	if err != nil {

@@ -1,6 +1,7 @@
 package loadavg
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -13,7 +14,7 @@ const (
 	path      = string(filepath.Separator) + "proc" + string(filepath.Separator) + "loadavg"
 )
 
-func (l *LoadAvg) Update() error {
+func (l *LoadAvg) Update(_ context.Context) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return err

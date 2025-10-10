@@ -42,14 +42,14 @@ func RunBuffered(cmd *exec.Cmd, stdout, stderr io.Writer) (*Buffer, error) {
 	return buf, err
 }
 
-// write represents a single write
+// write represents a single write.
 type write struct {
 	ts     time.Time
 	source io.Writer
 	data   []byte
 }
 
-// Writer creates an BufferWriter which writes to the provided stream
+// Writer creates an BufferWriter which writes to the provided stream.
 func (e *Buffer) Writer(f io.Writer) *BufferWriter {
 	return &BufferWriter{
 		Buffer: e,
@@ -57,7 +57,7 @@ func (e *Buffer) Writer(f io.Writer) *BufferWriter {
 	}
 }
 
-// Close waits for all in-flight writes to finish, then sorts them by timestamp
+// Close waits for all in-flight writes to finish, then sorts them by timestamp.
 func (e *Buffer) Close() {
 	e.wg.Wait()
 
@@ -116,13 +116,13 @@ func (e *Buffer) Len(source io.Writer) int64 {
 	return n
 }
 
-// BufferWriter handles writes to a given source
+// BufferWriter handles writes to a given source.
 type BufferWriter struct {
 	*Buffer
 	source io.Writer
 }
 
-// Write writes bytes for a source to the parent Buffer
+// Write writes bytes for a source to the parent Buffer.
 func (e *BufferWriter) Write(p []byte) (int, error) {
 	ts := time.Now()
 	data := slices.Clone(p)

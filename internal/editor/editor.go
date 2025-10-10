@@ -1,6 +1,7 @@
 package editor
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -20,7 +21,7 @@ const (
 var ErrUnset = errors.New("env is not set")
 
 // Get checks VISUAL and EDITOR and returns the first result.
-// If neither is set, it will return "vim"
+// If neither is set, it will return "vim".
 func Get() ([]string, error) {
 	var errs []error
 	for _, env := range []string{envEditor, envVisual} {
@@ -49,7 +50,7 @@ func parseEnv(env string) ([]string, error) {
 
 // Edit opens the configured editor with the given path.
 // If forceTTY is true, "/dev/tty" will be opened for stdin and stdout.
-func Edit(path string, forceTTY bool) error {
+func Edit(ctx context.Context, path string, forceTTY bool) error {
 	editor, err := Get()
 	if err != nil {
 		slog.Warn("Failed to parse editor envs", "error", err)
@@ -57,7 +58,7 @@ func Edit(path string, forceTTY bool) error {
 
 	editor = append(editor, path)
 
-	cmd := exec.Command(editor[0], editor[1:]...)
+	cmd := exec.CommandContext(ctx, editor[0], editor[1:]...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

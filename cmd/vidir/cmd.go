@@ -71,7 +71,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	_, disableTTY := cmd.Annotations[cmdutil.DisableTTYAnnotation]
-	if err := editor.Edit(tmp.Name(), !disableTTY); err != nil {
+	if err := editor.Edit(cmd.Context(), tmp.Name(), !disableTTY); err != nil {
 		return err
 	}
 
@@ -186,7 +186,7 @@ func createListing(w io.Writer, args []string, recursive bool) ([]string, error)
 
 	pad := strconv.FormatInt(int64(math.Log10(float64(len(paths)))+1), 10)
 	for i, path := range paths {
-		if _, err := buf.WriteString(fmt.Sprintf("%0"+pad+"d\t%s\n", i+1, path)); err != nil {
+		if _, err := fmt.Fprintf(buf, "%0"+pad+"d\t%s\n", i+1, path); err != nil {
 			return nil, err
 		}
 	}

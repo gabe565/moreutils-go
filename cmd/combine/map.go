@@ -21,7 +21,7 @@ func iterLines(r io.Reader) iter.Seq2[string, error] {
 	}
 }
 
-// collectLines returns a map of lines from an io.Reader
+// collectLines returns a map of lines from an io.Reader.
 func collectLines(r io.Reader) (map[string]struct{}, error) {
 	seen := make(map[string]struct{})
 	for line, err := range iterLines(r) {

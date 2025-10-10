@@ -27,11 +27,11 @@ func New(opts ...cobrax.Option) *cobra.Command {
 func run(cmd *cobra.Command, args []string) error {
 	cmd.SilenceUsage = true
 
-	e1 := exec.Command("sh", "-c", args[0])
+	e1 := exec.CommandContext(cmd.Context(), "sh", "-c", args[0])
 	e1.Stdin = cmd.InOrStdin()
 	e1.Stderr = cmd.ErrOrStderr()
 
-	e2 := exec.Command("sh", "-c", args[1])
+	e2 := exec.CommandContext(cmd.Context(), "sh", "-c", args[1])
 	e2.Stdout = cmd.OutOrStdout()
 	e2.Stderr = cmd.ErrOrStderr()
 	var err error

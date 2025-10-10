@@ -2,6 +2,7 @@ package zrun
 
 import (
 	"compress/gzip"
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -71,7 +72,7 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	e := exec.Command(args[0], args[1:]...)
+	e := exec.CommandContext(cmd.Context(), args[0], args[1:]...)
 	e.Stdin = cmd.InOrStdin()
 	e.Stdout = cmd.OutOrStdout()
 	e.Stderr = cmd.ErrOrStderr()
@@ -139,7 +140,7 @@ func decompressTmp(cmd *cobra.Command, path string) (string, error) {
 			return tmp.Name(), err
 		}
 
-		if _, err := io.Copy(tmp, gzr); err != nil {
+		if _, err := io.Copy(tmp, gzr); err != nil { //nolint:gosec
 			return tmp.Name(), err
 		}
 
@@ -163,7 +164,7 @@ func decompressTmp(cmd *cobra.Command, path string) (string, error) {
 			return tmp.Name(), fmt.Errorf("%w: %s", ErrUnknownExtension, ext)
 		}
 
-		if err := execDecompress(args, in, tmp, cmd.ErrOrStderr()); err != nil {
+		if err := execDecompress(cmd.Context(), args, in, tmp, cmd.ErrOrStderr()); err != nil {
 			return tmp.Name(), err
 		}
 	}
@@ -175,8 +176,8 @@ func decompressTmp(cmd *cobra.Command, path string) (string, error) {
 	return tmp.Name(), nil
 }
 
-func execDecompress(args []string, stdin io.Reader, stdout, stderr io.Writer) error {
-	cmd := exec.Command(args[0], args[1:]...)
+func execDecompress(ctx context.Context, args []string, stdin io.Reader, stdout, stderr io.Writer) error {
+	cmd := exec.CommandContext(ctx, args[0], args[1:]...)
 	cmd.Stdin = stdin
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr

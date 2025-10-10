@@ -57,13 +57,14 @@ func run(cmd *cobra.Command, args []string) error {
 		signal.Ignore(syscall.SIGPIPE)
 	}
 
-	ignoreWriteErrs := must.Must2(cmd.Flags().GetBool(FlagIgnoreWriteErrors)) && !must.Must2(cmd.Flags().GetBool(FlagNoIgnoreWriteErrors))
+	ignoreWriteErrs := must.Must2(cmd.Flags().GetBool(FlagIgnoreWriteErrors)) &&
+		!must.Must2(cmd.Flags().GetBool(FlagNoIgnoreWriteErrors))
 
 	cmds := make([]*exec.Cmd, 0, len(args))
 	pipes := make([]io.Writer, 0, len(args))
 	var errs []error
 	for _, arg := range args {
-		e := exec.Command("sh", "-c", arg)
+		e := exec.CommandContext(cmd.Context(), "sh", "-c", arg)
 		e.Stdout = cmd.OutOrStdout()
 		e.Stderr = cmd.ErrOrStderr()
 		stdin, err := e.StdinPipe()
@@ -100,7 +101,9 @@ func run(cmd *cobra.Command, args []string) error {
 
 		// Close pipes
 		for _, pipe := range pipes {
-			_ = pipe.(io.Closer).Close()
+			if closer, ok := pipe.(io.Closer); ok {
+				_ = closer.Close()
+			}
 		}
 	}()
 
@@ -114,7 +117,9 @@ func run(cmd *cobra.Command, args []string) error {
 		mu.Unlock()
 	}
 	for _, pipe := range pipes {
-		_ = pipe.(io.Closer).Close()
+		if closer, ok := pipe.(io.Closer); ok {
+			_ = closer.Close()
+		}
 	}
 
 	wg.Wait()

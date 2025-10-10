@@ -78,7 +78,7 @@ func run(cmd *cobra.Command, args []string) error {
 	return op.compare(cmd.OutOrStdout(), f1, f2)
 }
 
-// openFile opens the given file, or buffers stdin if "-"
+// openFile opens the given file, or buffers stdin if "-".
 func openFile(cmd *cobra.Command, path string) (io.ReadSeekCloser, error) {
 	switch path {
 	case "-":

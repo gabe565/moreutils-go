@@ -3,6 +3,7 @@
 package loadavg
 
 import (
+	"context"
 	"unsafe"
 
 	"golang.org/x/sys/unix"
@@ -12,7 +13,7 @@ const Supported = true
 
 // From https://github.com/prometheus/node_exporter/blob/master/collector/loadavg_bsd.go
 
-func (l *LoadAvg) Update() error {
+func (l *LoadAvg) Update(_ context.Context) error {
 	type loadavg struct {
 		load  [3]uint32
 		scale int

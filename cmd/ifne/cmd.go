@@ -54,7 +54,7 @@ func run(cmd *cobra.Command, args []string) error {
 	}
 
 	if willRun {
-		e := exec.Command(args[0], args[1:]...)
+		e := exec.CommandContext(cmd.Context(), args[0], args[1:]...)
 		e.Stdin = r
 		e.Stdout = cmd.OutOrStdout()
 		e.Stderr = cmd.ErrOrStderr()

@@ -39,10 +39,16 @@ func New(opts ...cobrax.Option) *cobra.Command {
 	}
 
 	cmd.Flags().SetInterspersed(false)
-	cmd.Flags().StringP(FlagJobs, "j", strconv.Itoa(runtime.NumCPU()), "Number of jobs to run in parallel. Can be a number or a percentage of CPU cores.")
+	cmd.Flags().StringP(FlagJobs, "j", strconv.Itoa(runtime.NumCPU()),
+		"Number of jobs to run in parallel. Can be a number or a percentage of CPU cores.",
+	)
 	cmd.Flags().Float64P(FlagLoad, "l", 0, "Wait until the system's load average is below a limit before starting jobs")
-	cmd.Flags().BoolP(FlagReplace, "i", false, `Normally the argument is added to the end of the command. With this option, instances of "{}" in the command are replaced with the argument.`)
-	cmd.Flags().IntP(FlagNumArgs, "n", 1, "Number of arguments to pass to a command at a time. Default is 1. Incompatible with -i")
+	cmd.Flags().BoolP(FlagReplace, "i", false,
+		`Normally the argument is added to the end of the command. With this option, instances of "{}" in the command are replaced with the argument.`,
+	)
+	cmd.Flags().IntP(FlagNumArgs, "n", 1,
+		"Number of arguments to pass to a command at a time. Default is 1. Incompatible with -i",
+	)
 	cmd.MarkFlagsMutuallyExclusive(FlagReplace, FlagNumArgs)
 
 	if !loadavg.Supported {
@@ -92,7 +98,7 @@ func run(cmd *cobra.Command, args []string) error {
 
 		group.Go(func() error {
 			execCmd := buildCmd(execCmd, args, replace)
-			e := exec.Command(execCmd[0], execCmd[1:]...)
+			e := exec.CommandContext(cmd.Context(), execCmd[0], execCmd[1:]...)
 			e.Stdin = cmd.InOrStdin()
 			e.Stdout = cmd.OutOrStdout()
 			e.Stderr = cmd.OutOrStderr()

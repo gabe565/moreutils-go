@@ -18,7 +18,7 @@ func TestParallel(t *testing.T) {
 	var stdout strings.Builder
 	cmd.SetOut(&stdout)
 	require.NoError(t, cmd.Execute())
-	assert.Equal(t, "", stdout.String())
+	assert.Empty(t, stdout.String())
 
 	entries, err := os.ReadDir(".")
 	require.NoError(t, err)

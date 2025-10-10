@@ -115,7 +115,6 @@ func main() {
 
 	readmeContents = slices.Concat(beforeApplets, []byte(beforeMarker), list, []byte(afterMarker), afterApplets)
 
-	//nolint:gosec
 	if err := os.WriteFile("README.md", readmeContents, 0o644); err != nil {
 		panic(err)
 	}
