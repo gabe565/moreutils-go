@@ -6,7 +6,7 @@ import (
 	"strings"
 	"syscall"
 
-	"golang.org/x/exp/constraints"
+	"gabe565.com/moreutils/internal/constraints"
 	"golang.org/x/sys/unix"
 )
 
@@ -24,7 +24,7 @@ func WithDescription(description string) Option {
 	}
 }
 
-func New[T unix.Errno | constraints.Integer](unixErr T, options ...Option) *Errno {
+func New[T constraints.Integer](unixErr T, options ...Option) *Errno {
 	err := &Errno{Errno: unix.Errno(unixErr)}
 	for _, opt := range options {
 		opt(err)
