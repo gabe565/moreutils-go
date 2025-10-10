@@ -3,13 +3,13 @@ module gabe565.com/moreutils
 go 1.25.2
 
 require (
-	gabe565.com/utils v0.0.0-20250302063333-ede73b14282c
+	gabe565.com/utils v0.0.0-20251001054419-00a1424779a7
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/gravwell/gravwell/v3 v3.8.56
 	github.com/lestrrat-go/strftime v1.1.0
 	github.com/mattn/go-tty v0.0.7
 	github.com/prometheus/procfs v0.17.0
-	github.com/spf13/cobra v1.9.1
+	github.com/spf13/cobra v1.10.1
 	github.com/spf13/pflag v1.0.10
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/sync v0.17.0
