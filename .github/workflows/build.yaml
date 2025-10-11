@@ -91,7 +91,7 @@ jobs:
       - name: Push beta image
         if: github.ref_name == 'main'
         run: |
-          export REPO="$(tr '[[:upper:]]' '[[:lower:]]' <<< "ghcr.io/$GITHUB_REPOSITORY")"
+          export REPO=ghcr.io/gabe565/moreutils
           IMAGES=()
           while read -r IMAGE; do
             docker push "$IMAGE"

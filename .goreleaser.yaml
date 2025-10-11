@@ -162,7 +162,7 @@ aurs:
 dockers_v2:
   - dockerfile: goreleaser.Dockerfile
     images:
-      - ghcr.io/gabe565/{{ .ProjectName }}
+      - ghcr.io/gabe565/moreutils
     tags:
       - "{{ if not .IsSnapshot }}{{ .Version }}{{ end }}"
       - "{{ if not .IsSnapshot }}{{ .Major }}.{{ .Minor }}{{ end }}"
