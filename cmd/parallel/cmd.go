@@ -123,8 +123,8 @@ func buildCmd(args []string, arg []string, replace bool) []string {
 func parseNumJobs(cmd *cobra.Command) (int, error) {
 	numJobsStr := must.Must2(cmd.Flags().GetString(FlagJobs))
 	var jobs int
-	if strings.HasSuffix(numJobsStr, "%") {
-		pct, err := strconv.Atoi(strings.TrimSuffix(numJobsStr, "%"))
+	if before, ok := strings.CutSuffix(numJobsStr, "%"); ok {
+		pct, err := strconv.Atoi(before)
 		if err != nil {
 			return 0, err
 		}

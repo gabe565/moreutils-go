@@ -86,10 +86,7 @@ func run(cmd *cobra.Command, args []string) error {
 
 	var mu sync.Mutex
 	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
+	wg.Go(func() {
 		// Wait for all commands to exit
 		for _, e := range cmds {
 			if err := e.Wait(); err != nil {
@@ -105,7 +102,7 @@ func run(cmd *cobra.Command, args []string) error {
 				_ = closer.Close()
 			}
 		}
-	}()
+	})
 
 	if _, err := io.Copy(io.MultiWriter(pipes...), cmd.InOrStdin()); err != nil {
 		mu.Lock()

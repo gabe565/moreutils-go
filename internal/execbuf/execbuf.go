@@ -126,11 +126,8 @@ type BufferWriter struct {
 func (e *BufferWriter) Write(p []byte) (int, error) {
 	ts := time.Now()
 	data := slices.Clone(p)
-	e.wg.Add(1)
 
-	go func() {
-		defer e.wg.Done()
-
+	e.wg.Go(func() {
 		e.mu.Lock()
 		defer e.mu.Unlock()
 
@@ -139,7 +136,7 @@ func (e *BufferWriter) Write(p []byte) (int, error) {
 			source: e.source,
 			data:   data,
 		})
-	}()
+	})
 
 	return len(p), nil
 }
