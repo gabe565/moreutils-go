@@ -74,7 +74,7 @@ func printBuf(cmd *cobra.Command, buf *execbuf.Buffer, exitCode int, verbose boo
 		return buf.Print(nil)
 	}
 
-	var errs []error
+	errs := make([]error, 0, 2)
 	_, _ = fmt.Fprintln(cmd.OutOrStdout(), "STDOUT:")
 	errs = append(errs, buf.Print(cmd.OutOrStdout()))
 	_, _ = fmt.Fprintln(cmd.OutOrStdout(), "\nSTDERR:")

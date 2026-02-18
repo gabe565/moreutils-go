@@ -24,10 +24,10 @@ func validArgs(cmd *cobra.Command, _ []string, _ string) ([]string, cobra.ShellC
 
 	var completions []string
 	for e := range errno.Iter() {
+		num := strconv.FormatUint(uint64(e.Errno), 10)
 		if search {
-			completions = append(completions, e.Error()+"\t"+e.Name()+" "+strconv.Itoa(int(e.Errno)))
+			completions = append(completions, e.Error()+"\t"+e.Name()+" "+num)
 		} else {
-			num := strconv.Itoa(int(e.Errno))
 			completions = append(completions,
 				num+"\t"+e.Name()+" "+e.Error(),
 				e.Name()+"\t"+num+" "+e.Error(),

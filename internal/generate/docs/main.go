@@ -77,7 +77,9 @@ func main() {
 
 		if subCmd.Name() != cmd.Name && !subCmd.HasParent() {
 			// Add "See Also" section to standalone commands
-			if _, err := io.WriteString(w, "### SEE ALSO\n\n* ["+cmd.Name+"]("+cmd.Name+".md)\t - "+root.Short+"\n\n"); err != nil {
+			if _, err := io.WriteString(
+				w, "### SEE ALSO\n\n* ["+cmd.Name+"]("+cmd.Name+".md)\t - "+root.Short+"\n\n",
+			); err != nil {
 				panic(err)
 			}
 		}
@@ -103,7 +105,7 @@ func main() {
 		panic(ErrMissingEndApplets)
 	}
 
-	var list []byte
+	list := make([]byte, 0, 1024)
 	linked := slices.Collect(subcommands.Without(nil))
 	for _, subCmd := range subcommands.All() {
 		docPath := subCmd.Name() + ".md"

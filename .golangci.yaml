@@ -138,6 +138,11 @@ linters:
       excludes:
         - G204
         - G306
+
+        # Taint analysis linters are currently too eager
+        - G703
+        - G702
+        - G705
     govet:
       enable-all: true
       disable:
