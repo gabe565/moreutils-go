@@ -16,14 +16,12 @@ func main() {
 	root := cmd.New(os.Args[0], cobrax.WithVersion(version))
 	root.SilenceErrors = true
 	if err := root.Execute(); err != nil {
-		var execErr *exec.ExitError
-		if errors.As(err, &execErr) {
-			os.Exit(execErr.ExitCode())
+		if err, ok := errors.AsType[*exec.ExitError](err); ok {
+			os.Exit(err.ExitCode())
 		}
 
-		var exitCodeErr *util.ExitCodeError
-		if errors.As(err, &exitCodeErr) {
-			os.Exit(exitCodeErr.ExitCode())
+		if err, ok := errors.AsType[*util.ExitCodeError](err); ok {
+			os.Exit(err.ExitCode())
 		}
 
 		root.PrintErrln(root.ErrPrefix(), err.Error())

@@ -53,9 +53,8 @@ func run(cmd *cobra.Command, args []string) error {
 
 	buf, err := execbuf.RunBuffered(e, cmd.OutOrStdout(), cmd.ErrOrStderr())
 	if err != nil {
-		var execErr *exec.ExitError
-		if errors.As(err, &execErr) {
-			if printErr := printBuf(cmd, buf, execErr.ExitCode(), verbose); printErr != nil {
+		if exitErr, ok := errors.AsType[*exec.ExitError](err); ok {
+			if printErr := printBuf(cmd, buf, exitErr.ExitCode(), verbose); printErr != nil {
 				err = errors.Join(err, printErr)
 			}
 		}
