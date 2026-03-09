@@ -143,7 +143,7 @@ func run(cmd *cobra.Command, args []string) error {
 		return errors.Join(errs...)
 	}
 
-	if len(ifaces) == 0 {
+	if len(args) == 0 {
 		v, err := net.Interfaces()
 		if err != nil {
 			return err
