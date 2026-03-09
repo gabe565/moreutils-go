@@ -5,7 +5,7 @@ go 1.26.1
 require (
 	gabe565.com/utils v0.0.0-20251001054419-00a1424779a7
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
-	github.com/gravwell/gravwell/v3 v3.8.72
+	github.com/gravwell/gravwell/v3 v3.8.76
 	github.com/lestrrat-go/strftime v1.1.1
 	github.com/mattn/go-tty v0.0.7
 	github.com/prometheus/procfs v0.17.0
@@ -26,8 +26,8 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/mod v0.25.0 // indirect
-	golang.org/x/tools v0.34.0 // indirect
+	golang.org/x/mod v0.30.0 // indirect
+	golang.org/x/tools v0.39.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
