@@ -158,8 +158,10 @@ func run(cmd *cobra.Command, args []string) error {
 		})
 	}
 
+	multiple := len(args) != 1
+
 	for _, iface := range ifaces {
-		s, err := format.Sprint(iface)
+		s, err := format.Sprint(iface, multiple)
 		if err != nil {
 			if errors.Is(err, ErrUnknownFormatter) {
 				cmd.SilenceUsage = false
@@ -169,7 +171,7 @@ func run(cmd *cobra.Command, args []string) error {
 		}
 
 		if s != "" {
-			if len(args) != 1 {
+			if multiple {
 				s = iface.Name + " " + s
 			}
 			_, _ = io.WriteString(cmd.OutOrStdout(), s+"\n")

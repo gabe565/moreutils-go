@@ -121,12 +121,16 @@ func (f formatter) supported() bool {
 
 var ErrUnknownFormatter = errors.New("unknown formatter")
 
-func (f formatter) Sprint(iface *net.Interface) (string, error) {
+func (f formatter) Sprint(iface *net.Interface, oneLine bool) (string, error) {
 	switch f {
 	case fmtMTU:
 		return strconv.Itoa(iface.MTU), nil
 	case fmtFlags:
-		return strings.ReplaceAll(iface.Flags.String(), "|", "\n"), nil
+		replacement := "\n"
+		if oneLine {
+			replacement = " "
+		}
+		return strings.ReplaceAll(iface.Flags.String(), "|", replacement), nil
 	case fmtHardwareAddress:
 		return strings.ToUpper(iface.HardwareAddr.String()), nil
 	case fmtAddress, fmtNetmask, fmtNetworkAddress, fmtBroadcastAddress, fmtPrint:
