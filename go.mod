@@ -3,7 +3,7 @@ module gabe565.com/moreutils
 go 1.26.1
 
 require (
-	gabe565.com/utils v0.0.0-20251001054419-00a1424779a7
+	gabe565.com/utils v0.0.0-20260310002041-b3b94f17b36b
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510
 	github.com/gravwell/gravwell/v3 v3.8.76
 	github.com/lestrrat-go/strftime v1.1.1
