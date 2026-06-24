@@ -9,7 +9,7 @@ import (
 	"os/exec"
 
 	"github.com/google/shlex"
-	"github.com/mattn/go-tty"
+	"github.com/mattn/go-tty/v2"
 )
 
 const (
